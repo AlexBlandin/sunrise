@@ -4,11 +4,6 @@ __pycache__/
 *$py.class
 tempCodeRunnerFile.py
 
-# C extensions
-*.so
-2020/c/simde
-2020/c/advent
-
 # Distribution / packaging
 .Python
 build/
