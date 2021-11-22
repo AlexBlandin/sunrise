@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
 from skyfield import api
+from pathlib import Path
 
-ts = api.load.timescale()
-eph = api.load("de421.bsp")
+load = api.Loader(Path(__file__).parent.absolute(), verbose=False)
+ts = load.timescale()
+eph = load("de421.bsp")
 from skyfield import almanac
 from geocoder import ip
 
