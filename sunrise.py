@@ -28,10 +28,13 @@ def sun():
   sunrise = [None,None]
   for time, riseQ in zip(t,y):
     if riseQ:
-      sunrise[0] = f"🌅: {nearest_minute(time.utc_datetime()):%H:%M}"
+      sunrise[0] = f"{nearest_minute(time.utc_datetime()):%H:%M}"
     else:
-      sunrise[1] = f"🌇: {nearest_minute(time.utc_datetime()):%H:%M}"
-  return ", ".join(sunrise)
+      sunrise[1] = f"{nearest_minute(time.utc_datetime()):%H:%M}"
+  return sunrise
+
+def format_sunrise(sunrise):
+  return f"🌅: {sunrise[0]} 🌇: {sunrise[1]}"
 
 if __name__ == "__main__":
-  sun()
+  print(format_sunrise(sun()))
