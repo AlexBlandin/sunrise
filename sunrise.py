@@ -17,7 +17,7 @@ def today(ts):
 def tomorrow(ts):
   return (today(ts) + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
 
-def sun(RISE=True):
+def sun():
   lat, lon = ip("me").latlng
   here = api.wgs84.latlon(lat, lon)
 
@@ -25,18 +25,13 @@ def sun(RISE=True):
   t0 = ts.utc(tdy.year, tdy.month, tdy.day)
   t1 = ts.utc(tmw.year, tmw.month, tmw.day)
   t, y = almanac.find_discrete(t0, t1, almanac.sunrise_sunset(eph, here))
+  sunrise = [None,None]
   for time, riseQ in zip(t,y):
-    if riseQ and not RISE:
-      continue
-    elif not riseQ and RISE:
-      continue
-    print(f"{nearest_minute(time.utc_datetime()):%H:%M}")
-
-def sunrise():
-  sun()
-
-def sunset():
-  sun(False)
+    if riseQ:
+      sunrise[0] = f"🌅: {nearest_minute(time.utc_datetime()):%H:%M}"
+    else:
+      sunrise[1] = f"🌇: {nearest_minute(time.utc_datetime()):%H:%M}"
+  return ", ".join(sunrise)
 
 if __name__ == "__main__":
-  sunrise()
+  sun()
