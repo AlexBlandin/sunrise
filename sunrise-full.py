@@ -29,19 +29,19 @@ Inputs:
 def lalo(s: str):
   if "N" in s and "W" in s:
     a,b,c,d = parse("{:d}°{:g}′N {:d}°{:g}′W", s).fixed
-    return a+b/60, c+d/60
+    return a + b/60, c + d/60
   elif "N" in s and "W" not in s:
     a,b,c,d = parse("{:d}°{:g}′N {:d}°{:g}′E", s).fixed
-    return a+b/60, -(c+d/60)
+    return a + b/60, -(c + d/60)
   elif "N" not in s and "W" in s:
     a,b,c,d = parse("{:d}°{:g}′S {:d}°{:g}′W", s).fixed
-    return -(a+b/60), c+d/60
+    return -(a + b/60), c + d/60
   else:
     a,b,c,d = parse("{:d}°{:g}′S {:d}°{:g}′E", s).fixed
-    return -(a+b/60), -(c+d/60)
+    return -(a + b/60), -(c + d/60)
 
-def sunrisesunset(latitude, longitude, when=None):
-  def f(latitude, longitude, rising, when=None):
+def sunrisesunset(latitude, longitude, when: datetime = None):
+  def __calc(latitude, longitude, rising, when: datetime = None):
     zenith = radians(90 + 50/60)
     latitude = radians(latitude)
 
@@ -54,7 +54,6 @@ def sunrisesunset(latitude, longitude, when=None):
     if when is None:
       day = int(datetime.now().strftime("%j"))
     else:
-      when: datetime
       day = int(when.strftime("%j"))
 
     """2. convert the longitude to hour value and calculate an approximate time
@@ -159,7 +158,7 @@ def sunrisesunset(latitude, longitude, when=None):
     sec, minutes, hours = seconds % 60, seconds % 3600 // 60, seconds % 86400 // 3600
     
     return f"{'🌅' if rising else '🌇'}: {hours:02}:{minutes:02}:{sec:02}"
-  return f(latitude, longitude, True, when), f(latitude, longitude, False, when)
+  return __calc(latitude, longitude, True, when), __calc(latitude, longitude, False, when)
 
 if __name__ == "__main__":
   jersey = "49°11.4′N 2°6.6′W"
@@ -169,9 +168,7 @@ if __name__ == "__main__":
   # for 2021-01-19, in Jersey, it gave:
   # 🌅: 07:54:30 🌇: 16:44:30 (weather.com)
   # 🌅: 07:38:11 🌇: 16:25:58 (temp.py)
-  # 🌅: 07:38:15 🌇: 16:26:58 in Jersey (sunrise.py)
+  # 🌅: 07:38:15 🌇: 16:26:58 in Jersey (sunrise-full.py)
   # wolfram claims to take account of atmospheric refraction, so it's the apparent time? gweather is very close so similar
   # now not taking account may have an effect "on order of minutes" and there's the possibility the NOAA calculations are off
   # TODO: FIX THIS MESS (both in terms of code but also just the problem itself)
-
-  # (cough, may have written a cached version using wolfram)
