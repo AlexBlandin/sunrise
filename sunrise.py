@@ -7,7 +7,7 @@ from pathlib import Path
 
 load = api.Loader(Path(__file__).parent.absolute(), verbose = False)
 ts = load.timescale()
-eph = load("de440s.bsp")
+eph = load("de440s-100y.bsp") if (Path(__file__).parent/"de440s-100y.bsp").is_file() else load("de440s.bsp")
 from skyfield import almanac
 from geocoder import ip
 
