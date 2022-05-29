@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from logging import exception
 from skyfield.timelib import Time
 from datetime import datetime
 from skyfield import api
@@ -10,7 +11,8 @@ ts = load.timescale()
 eph = load("de440s-100y.bsp") if (Path(__file__).parent / "de440s-100y.bsp").is_file() else load("de440s.bsp")
 
 from skyfield import almanac
-from helpers import format_sunriseset, sortas, day_after, guess_latlon, today, tomorrow
+import pendulum
+from helpers import format_sunriseset, sortas, guess_latlon
 
 def correct(lat: float = None, lon: float = None, when: datetime = None):
   "When does the sun rise and set?"
@@ -20,17 +22,17 @@ def correct(lat: float = None, lon: float = None, when: datetime = None):
   here = api.wgs84.latlon(lat, lon)
   
   if when is None:
-    tdy, tmw = today(ts), tomorrow(ts)
+    tdy, tmw = pendulum.today(), pendulum.tomorrow()
   else:
-    tdy = when.replace(hour = 0, minute = 0, second = 0, microsecond = 0)
-    tmw = day_after(tdy)
+    tdy = pendulum.instance(when)
+    tmw = (when + pendulum.duration(days = 1, hours = tdy.offset_hours)).replace(hour = 0)
   
   t0 = ts.utc(tdy.year, tdy.month, tdy.day)
   t1 = ts.utc(tmw.year, tmw.month, tmw.day)
   t, y = almanac.find_discrete(t0, t1, almanac.sunrise_sunset(eph, here))
   
   # for now we assume there's both (so not above artic circle etc)
-  sunrise, sunset = map(Time.utc_datetime, reversed(sortas(t, y)))
+  sunrise, sunset = map(lambda t: t.astimezone(pendulum.tz.local_timezone()), reversed(sortas(t, y)))
   return format_sunriseset(sunrise, sunset)
 
 if __name__ == "__main__":
