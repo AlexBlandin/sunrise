@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from skyfield.timelib import Timescale, Time
+from skyfield.timelib import Time
 from datetime import datetime
 from skyfield import api
 from pathlib import Path
@@ -10,13 +10,7 @@ ts = load.timescale()
 eph = load("de440s-100y.bsp") if (Path(__file__).parent / "de440s-100y.bsp").is_file() else load("de440s.bsp")
 
 from skyfield import almanac
-from helpers import format_sunriseset, sortas, day_after, guess_latlon
-
-def today(ts: Timescale):
-  return ts.now().utc_datetime().replace(hour = 0, minute = 0, second = 0, microsecond = 0)
-
-def tomorrow(ts: Timescale):
-  return day_after(today(ts))
+from helpers import format_sunriseset, sortas, day_after, guess_latlon, today, tomorrow
 
 def correct(lat: float = None, lon: float = None, when: datetime = None):
   "When does the sun rise and set?"

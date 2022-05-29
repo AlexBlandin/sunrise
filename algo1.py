@@ -23,16 +23,14 @@ def algo1(lat: float = None, lon: float = None, when: datetime = None):
       offical      = 90 degrees 50'
       civil        = 96 degrees
       nautical     = 102 degrees
-      astronomical = 108 degrees
-    
-    NOTE: longitude is positive for East and negative for West
+      astronomical = 108 degrees  
   """
   # may also use some from http://answers.google.com/answers/threadview/id/782886.html
   
   if lat is None and lon is None:
     lat, lon = guess_latlon()
   if when is None:
-    when = datetime.utcnow() # TODO: it's not respecting timezones (BST etc)
+    when = datetime.now() # TODO: it's not respecting timezones (BST etc)
   
   def _sunrise(rising = True):
     zenith = radians(90 + 50 / 60)
@@ -142,4 +140,4 @@ def algo1(lat: float = None, lon: float = None, when: datetime = None):
 
 if __name__ == "__main__":
   swansea = "51°37′N 3°57′W"
-  print(*algo1(*lalo(swansea)))
+  print(algo1(*lalo(swansea)))

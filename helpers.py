@@ -1,16 +1,26 @@
 from datetime import datetime, timedelta
+from skyfield.timelib import Timescale
+from collections import namedtuple
 from operator import itemgetter
 from parse import parse
 from geocoder import ip
 
+LatLon = namedtuple("LatLon", "lat lon")
+
 def guess_latlon():
-  return ip("me").latlng
+  return LatLon(*ip("me").latlng)
 
 def sortas(first: list, second: list):
   return list(map(itemgetter(0), sorted(zip(first, second), key = itemgetter(1))))
 
 def nearest_minute(dt: datetime):
   return (dt + timedelta(seconds = 30)).replace(second = 0, microsecond = 0)
+
+def today(ts: Timescale) -> datetime:
+  return ts.now().utc_datetime().replace(hour = 0, minute = 0, second = 0, microsecond = 0)
+
+def tomorrow(ts: Timescale):
+  return day_after(today(ts))
 
 def day_after(dt: datetime):
   return (dt + timedelta(days = 1)).replace(hour = 0, minute = 0, second = 0, microsecond = 0)
