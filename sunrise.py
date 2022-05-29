@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from skyfield.timelib import Timescale, Time
-from datetime import timedelta, datetime
+from datetime import datetime
 from skyfield import api
 from pathlib import Path
 

@@ -1,9 +1,9 @@
 from math import sin, cos, tan, asin, acos, atan, floor
 from math import degrees, radians
-from datetime import datetime, timedelta
-from helpers import lalo, nearest_minute
+from datetime import datetime
+from helpers import lalo, format_sunriseset
 
-def algo1(latitude, longitude, when: datetime = None):
+def algo1(lat: float, lon: float, when: datetime = None):
   """
   Source:
     Almanac for Computers, 1990
@@ -26,113 +26,115 @@ def algo1(latitude, longitude, when: datetime = None):
     NOTE: longitude is positive for East and negative for West
   """
   # may also use some from http://answers.google.com/answers/threadview/id/782886.html
-  def __calc(latitude, longitude, rising, when: datetime = None):
+  
+  if when is None:
+    when = datetime.now()
+  
+  def _sunrise(rising = True):
     zenith = radians(90 + 50 / 60)
-    latitude = radians(latitude)
+    rlat = radians(lat)
     """1. first calculate the day of the year
       N1 = floor(275 * month / 9)
       N2 = floor((month + 9) / 12)
       N3 = (1 + floor((year - 4 * floor(year / 4) + 2) / 3))
       N = N1 - (N2 * N3) + day - 30
     """
-    if when is None:
-      when = datetime.now()
-    day = int(when.strftime("%j"))
+    
+    n = int(when.strftime("%j"))
     """2. convert the longitude to hour value and calculate an approximate time
-      lngHour = longitude / 15
+      lng_hour = longitude / 15
       
       if rising time is desired:
-        t = N + ((6 - lngHour) / 24)
+        t = N + ((6 - lng_hour) / 24)
       if setting time is desired:
-        t = N + ((18 - lngHour) / 24)
+        t = N + ((18 - lng_hour) / 24)
     """
-    lngHour = longitude / 15 #... could do much better than this since UTC data is available
+    lng_hour = lon / 15 # TODO: do correctly
     if rising:
-      t = day + (6 - lngHour) / 24
+      t = n + (6 - lng_hour) / 24
     else:
-      t = day + (18 - lngHour) / 24
+      t = n + (18 - lng_hour) / 24
     """3. calculate the Sun's mean anomaly
       M = (0.9856 * t) - 3.289
     """
-    M = 0.9856 * t - 3.289
+    m = 0.9856 * t - 3.289
     """4. calculate the Sun's true longitude
       L = M + (1.916 * sin(M)) + (0.020 * sin(2 * M)) + 282.634
-      NOTE: L potentially needs to be adjusted into the range [0,360) by adding/subtracting 360
+      NOTE: L should now be modulo 360
     """
-    L = M + 1.916 * sin(radians(M)) + 0.020 * sin(radians(2 * M)) + 282.634
-    L %= 360 # works in python :)
+    l = m + 1.916 * sin(radians(m)) + 0.020 * sin(radians(2 * m)) + 282.634
+    l %= 360
     """5a. calculate the Sun's right ascension
       RA = atan(0.91764 * tan(L))
-      NOTE: RA potentially needs to be adjusted into the range [0,360) by adding/subtracting 360
+      NOTE: RA should now by modulo 360
     """
-    RA = degrees(atan(0.91764 * tan(radians(L))))
-    RA %= 360
+    ra = degrees(atan(0.91764 * tan(radians(l))))
+    ra %= 360
     """5b. right ascension value needs to be in the same quadrant as L
-      Lquadrant  = (floor( L/90)) * 90
-      RAquadrant = (floor(RA/90)) * 90
-      RA = RA + (Lquadrant - RAquadrant)
+      l_quad = (floor( L/90)) * 90
+      ra_quad = (floor(RA/90)) * 90
+      RA = RA + (l_quad - ra_quad)
     """
-    Lquadrant = 90 * floor(L / 90)
-    RAquadrant = 90 * floor(RA / 90)
-    RA += Lquadrant - RAquadrant
+    l_quad = 90 * floor(l / 90)
+    ra_quad = 90 * floor(ra / 90)
+    ra += l_quad - ra_quad
     """5c. right ascension value needs to be converted into hours
       RA = RA / 15
     """
-    RA /= 15
+    ra /= 15
     """6. calculate the Sun's declination
-      sinDec = 0.39782 * sin(L)
-      cosDec = cos(asin(sinDec))
+      sin_dec = 0.39782 * sin(L)
+      cos_dec = cos(asin(sin_dec))
     """
-    sinDec = 0.39782 * sin(radians(L))
-    cosDec = cos(asin(sinDec))
+    sin_dec = 0.39782 * sin(radians(l))
+    cos_dec = cos(asin(sin_dec))
     """7a. calculate the Sun's local hour angle
-      cosH = (cos(zenith) - (sinDec * sin(latitude))) / (cosDec * cos(latitude))
+      cos_local_h = (cos(zenith) - (sin_dec * sin(latitude))) / (cos_dec * cos(latitude))
       
-      if (cosH >  1)
+      if (cos_local_h >  1)
         the sun never rises on this location (on the specified date)
-      if (cosH < -1)
+      if (cos_local_h < -1)
         the sun never sets on this location (on the specified date)
     """
-    cosH = (cos(zenith) - (sinDec * sin(latitude))) / (cosDec * cos(latitude))
-    if cosH > 1 or cosH < -1:
+    cos_local_h = (cos(zenith) - (sin_dec * sin(rlat))) / (cos_dec * cos(rlat))
+    if cos_local_h > 1 or cos_local_h < -1:
       return f"never {'rises' if rising else 'sets'}"
     """7b. finish calculating H and convert into hours
       if rising time is desired:
-        H = 360 - acos(cosH)
+        H = 360 - acos(cos_local_h)
       if setting time is desired:
-        H = acos(cosH)
+        H = acos(cos_local_h)
       
       H = H / 15
     """
     if rising:
-      H = 360 - degrees(acos(cosH))
+      h = 360 - degrees(acos(cos_local_h))
     else:
-      H = degrees(acos(cosH))
-    H = H / 15
+      h = degrees(acos(cos_local_h))
+    h = h / 15
     """8. calculate local mean time of rising/setting
       T = H + RA - (0.06571 * t) - 6.622
     """
-    T = H + RA - 0.06571 * t - 6.622
+    t = h + ra - 0.06571 * t - 6.622
     """9. adjust back to UTC
-      UT = T - lngHour
-      NOTE: UT potentially needs to be adjusted into the range [0,24) by adding/subtracting 24
+      UT = T - lng_hour
+      NOTE: UT should now be modulo 24
     """
-    UT = T - lngHour
-    UT %= 24
+    ut = t - lng_hour
+    ut %= 24
     """10. convert UT value to local time zone of latitude/longitude
-      localT = UT + localOffset
+      local_t = UT + localOffset
     """
-    offset = longitude // 15 # estimate utc correction # ooooor just do it properly...
-    localT = UT + offset
-    seconds = int(localT * 3600)
-    
+    offset = lon // 15 # TODO: do correctly
+    local_t = ut + offset
+    """
+    convert local_t to human-readable time
+    """
+    seconds = int(local_t * 3600)
     sec, minutes, hours = seconds % 60, seconds % 3600 // 60, seconds % 86400 // 3600
-    dt = datetime(year = when.year, month = when.month, day = when.day, hour = hours, minute = minutes, second = sec)
-    dt = nearest_minute(dt)
-    
-    return f"{'🌅' if rising else '🌇'}: {dt:%H:%M}"
+    return when.replace(hour = hours, minute = minutes, second = sec)
   
-  return __calc(latitude, longitude, True, when) + __calc(latitude, longitude, False, when)
+  return format_sunriseset(_sunrise(), _sunrise(False))
 
 if __name__ == "__main__":
   swansea = "51°37′N 3°57′W"
