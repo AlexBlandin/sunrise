@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from math import sin, cos, tan, asin, acos, atan, floor
 from math import degrees, radians
 from datetime import datetime

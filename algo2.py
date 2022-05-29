@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from datetime import datetime, timedelta
 from math import sin, cos, tan, asin, acos
 from math import degrees as deg, radians as rad

@@ -2,7 +2,6 @@ from datetime import datetime
 from algo1 import algo1
 from algo2 import algo2
 from correct import correct
-from helpers import day_after
 
 swansea = 51.62, 3.95
 when = datetime.now()
