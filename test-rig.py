@@ -1,9 +1,8 @@
 from algo1 import algo1
 from algo2 import algo2
 from correct import correct
-from helpers import guess_latlon, lalo
+from helpers import guess_latlon
 
-swansea = lalo("51°37′N 3°57′W")
 latlon = guess_latlon()
 print(*swansea)
 print(*latlon)

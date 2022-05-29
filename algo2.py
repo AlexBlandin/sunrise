@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from math import sin, cos, tan, asin, acos
 from math import degrees as deg, radians as rad
 
-from helpers import lalo, format_sunriseset, guess_latlon
+from helpers import format_sunriseset, guess_latlon
 
 def algo2(lat: float = None, lon: float = None, when: datetime = None):
   """
@@ -76,5 +76,4 @@ def algo2(lat: float = None, lon: float = None, when: datetime = None):
   return format_sunriseset(sunrise, sunset)
 
 if __name__ == "__main__":
-  swansea = "51°37′N 3°57′W"
-  print(algo2(*lalo(swansea)))
+  print(algo2())
