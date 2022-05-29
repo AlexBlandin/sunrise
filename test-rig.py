@@ -1,12 +1,12 @@
 from datetime import datetime
 from algo1 import algo1
 from algo2 import algo2
-from correct import sun
+from correct import correct
 from helpers import day_after
 
 swansea = 51.62, 3.95
 when = datetime.now()
-print("Correct", sun(*swansea, when))
+print("Correct", correct(*swansea, when))
 print("Algo 01", algo1(*swansea, when))
 print("Algo 02", algo2(*swansea, when))
 

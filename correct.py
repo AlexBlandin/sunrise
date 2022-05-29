@@ -19,7 +19,7 @@ def today(ts: Timescale):
 def tomorrow(ts: Timescale):
   return day_after(today(ts))
 
-def sun(lat: float = None, lon: float = None, when: datetime = None):
+def correct(lat: float = None, lon: float = None, when: datetime = None):
   "When does the sun rise and set?"
   
   if lat is None and lon is None:
@@ -40,4 +40,4 @@ def sun(lat: float = None, lon: float = None, when: datetime = None):
   return format_sunriseset(sunrise, sunset)
 
 if __name__ == "__main__":
-  print(sun())
+  print(correct())
