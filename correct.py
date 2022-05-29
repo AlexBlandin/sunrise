@@ -24,6 +24,7 @@ def correct(lat: float = None, lon: float = None, when: datetime = None):
   else:
     tdy = when.replace(hour = 0, minute = 0, second = 0, microsecond = 0)
     tmw = day_after(tdy)
+  
   t0 = ts.utc(tdy.year, tdy.month, tdy.day)
   t1 = ts.utc(tmw.year, tmw.month, tmw.day)
   t, y = almanac.find_discrete(t0, t1, almanac.sunrise_sunset(eph, here))
