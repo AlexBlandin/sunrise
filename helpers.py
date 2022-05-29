@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 from operator import itemgetter
 from parse import parse
-from time import time
 
 def sortas(first: list, second: list):
   return list(map(itemgetter(0), sorted(zip(first, second), key = itemgetter(1))))
@@ -28,23 +27,3 @@ def lalo(s: str):
   else:
     a, b, c, d = parse("{:d}°{:g}′S {:d}°{:g}′E", s).fixed
     return -(a + b / 60), -(c + d / 60)
-
-def human_time(t: float, seconds = True):
-  "because nobody makes it humanly readable"
-  return f"{int(t//60)}m {human_time((int(t)%60)+(t-int(t)), True)}" if t > 60 else \
-         f"{t:.3f}s" if t > 0.1 and seconds else                                    \
-         f"{t*1000:.3f}ms" if t > 0.0001 else                                       \
-         f"{t*1000000:.3f}us"
-
-def tf(func, *args, pretty = True, **kwargs):
-  "time func func, as in, time the function func"
-  start = time()
-  r = func(*args, **kwargs)
-  end = time()
-  if pretty:
-    print(
-      f"{func.__qualname__}({', '.join(list(map(str,args)) + [f'{k}={v}' for k,v in kwargs.items()])}) = {r}, took {human_time(end-start)}"
-    )
-  else:
-    print(human_time(end - start))
-  return r

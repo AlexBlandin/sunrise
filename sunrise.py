@@ -20,6 +20,8 @@ def tomorrow(ts: Timescale):
   return day_after(today(ts))
 
 def sun(lat: float = None, lon: float = None, when: datetime = None):
+  "When does the sun rise and set?"
+  
   if lat is None and lon is None:
     lat, lon = ip("me").latlng
   here = api.wgs84.latlon(lat, lon)
