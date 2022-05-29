@@ -1,6 +1,10 @@
 from datetime import datetime, timedelta
 from operator import itemgetter
 from parse import parse
+from geocoder import ip
+
+def guess_latlon():
+  return ip("me").latlng
 
 def sortas(first: list, second: list):
   return list(map(itemgetter(0), sorted(zip(first, second), key = itemgetter(1))))

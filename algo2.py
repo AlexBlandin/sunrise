@@ -4,15 +4,16 @@ from datetime import datetime, timedelta
 from math import sin, cos, tan, asin, acos
 from math import degrees as deg, radians as rad
 
-from helpers import lalo, format_sunriseset
+from helpers import lalo, format_sunriseset, guess_latlon
 
-def algo2(lat = 51.62, long = 3.95, when: datetime = None):
+def algo2(lat: float = None, lon: float = None, when: datetime = None):
   """
   Calculate sunrise and sunset based on equations from NOAA
   http://www.srrb.noaa.gov/highlights/sunrise/calcdetails.html
   """
-  
-  if when is None: when = datetime.now()
+  if lat is None and lon is None:
+    lat, lon = guess_latlon()
+  if when is None: when = datetime.utcnow()
   
   # datetime days are numbered in the Gregorian calendar
   # while the calculations from NOAA are distibuted as
@@ -28,7 +29,7 @@ def algo2(lat = 51.62, long = 3.95, when: datetime = None):
   if not offset is None:
     timezone = offset.seconds / 3600.0 + (offset.days * 24)
   
-  longitude = long # in decimal degrees, east is positive
+  longitude = lon # in decimal degrees, east is positive
   latitude = lat # in decimal degrees, north is positive
   
   Jday = day + 2415018.5 + time - timezone / 24 # Julian day

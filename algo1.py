@@ -3,9 +3,9 @@
 from math import sin, cos, tan, asin, acos, atan, floor
 from math import degrees, radians
 from datetime import datetime
-from helpers import lalo, format_sunriseset
+from helpers import lalo, format_sunriseset, guess_latlon
 
-def algo1(lat: float, lon: float, when: datetime = None):
+def algo1(lat: float = None, lon: float = None, when: datetime = None):
   """
   Source:
     Almanac for Computers, 1990
@@ -29,8 +29,10 @@ def algo1(lat: float, lon: float, when: datetime = None):
   """
   # may also use some from http://answers.google.com/answers/threadview/id/782886.html
   
+  if lat is None and lon is None:
+    lat, lon = guess_latlon()
   if when is None:
-    when = datetime.now()
+    when = datetime.utcnow() # TODO: it's not respecting timezones (BST etc)
   
   def _sunrise(rising = True):
     zenith = radians(90 + 50 / 60)

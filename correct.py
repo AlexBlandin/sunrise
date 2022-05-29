@@ -10,8 +10,7 @@ ts = load.timescale()
 eph = load("de440s-100y.bsp") if (Path(__file__).parent / "de440s-100y.bsp").is_file() else load("de440s.bsp")
 
 from skyfield import almanac
-from geocoder import ip
-from helpers import format_sunriseset, sortas, day_after
+from helpers import format_sunriseset, sortas, day_after, guess_latlon
 
 def today(ts: Timescale):
   return ts.now().utc_datetime().replace(hour = 0, minute = 0, second = 0, microsecond = 0)
@@ -23,7 +22,7 @@ def correct(lat: float = None, lon: float = None, when: datetime = None):
   "When does the sun rise and set?"
   
   if lat is None and lon is None:
-    lat, lon = ip("me").latlng
+    lat, lon = guess_latlon()
   here = api.wgs84.latlon(lat, lon)
   
   if when is None:
