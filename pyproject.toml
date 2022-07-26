@@ -6,7 +6,6 @@ authors = ["AlexBlandin"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
-# rtoml = "^0.7.1"
 skyfield = "^1.42"
 geocoder = "^1.38.1"
 
