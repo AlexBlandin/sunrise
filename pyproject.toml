@@ -8,6 +8,7 @@ authors = ["AlexBlandin"]
 python = "^3.9"
 skyfield = "^1.42"
 geocoder = "^1.38.1"
+pendulum = "^2.1.2"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.14.5"

@@ -7,6 +7,8 @@ You may find the `dms_to_latlon` function handy, as you can pass co-ordinates fr
 
 `sunrise.py` dependencies:
 - [Python 3.9](https://www.python.org)
+- [Pendulum](https://pendulum.eustace.io)
+  - `pip install pendulum`
 - [Geocoder](https://github.com/DenisCarriere/geocoder)
   - `pip install geocoder`
 

@@ -15,9 +15,9 @@ You may find the dms_to_latlon function handy, as you can pass co-ordinates from
 
 Dependencies:
 - Python 3.9
-- pip install skyfield geocoder
-  - Skyfield https://rhodesmill.org/skyfield/
+- pip install geocoder pendulum
   - Geocoder https://github.com/DenisCarriere/geocoder
+  - Pendulum https://pendulum.eustace.io
 """
 
 from math import sin, cos, tan, asin, acos, atan, floor, degrees, radians
