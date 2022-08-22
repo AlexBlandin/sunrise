@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 """
 ███████╗██╗   ██╗███╗   ██╗██████╗ ██╗███████╗███████╗   ██████╗ ██╗   ██╗
 ██╔════╝██║   ██║████╗  ██║██╔══██╗██║██╔════╝██╔════╝   ██╔══██╗╚██╗ ██╔╝
@@ -20,10 +19,10 @@ Dependencies:
   - Pendulum https://pendulum.eustace.io
 """
 
-from math import sin, cos, tan, asin, acos, atan, floor, degrees, radians
 from operator import itemgetter, mul
-from typing import NamedTuple, Union
 from datetime import datetime
+from typing import NamedTuple, Union
+from math import radians, degrees, floor, atan, asin, acos, tan, sin, cos
 
 from geocoder import ip
 import pendulum
@@ -57,7 +56,11 @@ def dms_to_latlon(s: str):
   convert = lambda dms: sum(map(mul, dms, [1] + [1 / (i * 60) for i in range(1, len(dms))]))
   return LatLon(north * convert(ns), east * convert(ew))
 
-def sun(lat: Union[float, tuple[float, float], None] = None, lon: Union[float, None] = None, when: Union[datetime, None] = None):
+def sun(
+  lat: Union[float, tuple[float, float], None] = None,
+  lon: Union[float, None] = None,
+  when: Union[datetime, None] = None
+):
   """
   Source:
     Almanac for Computers, 1990
