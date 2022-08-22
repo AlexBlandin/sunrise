@@ -7,7 +7,7 @@ latlon = guess_latlon()
 print("correct", correct(*latlon))
 print("approx", approx(*latlon))
 
-# algo1 is basically correct, just WAY faster, if you're okay with being a tad off at times
+# approx is basically correct, and WAY faster, if you're okay with being just a tad off at times
 
 guesses = [
   (correct(*latlon, day).removeprefix("🌅: ").split(" 🌇: "), approx(*latlon, day).removeprefix("🌅: ").split(" 🌇: "), day)
