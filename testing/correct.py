@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-from logging import exception
-from skyfield.timelib import Time
 from datetime import datetime
+from typing import Union
+
 from skyfield import api
 from pathlib import Path
 
@@ -12,13 +12,16 @@ eph = load("de440s-100y.bsp") if (Path(__file__).parent / "de440s-100y.bsp").is_
 
 from skyfield import almanac
 import pendulum
+
 from helpers import format_sunriseset, sortas, guess_latlon
 
-def correct(lat: float = None, lon: float = None, when: datetime = None):
+def correct(lat: Union[float, tuple[float, float], None] = None, lon: Union[float, None] = None, when: Union[datetime, None] = None):
   "When does the sun rise and set?"
   
   if lat is None and lon is None:
     lat, lon = guess_latlon()
+  elif isinstance(lat, tuple):
+    lat, lon = lat
   here = api.wgs84.latlon(lat, lon)
   
   if when is None:
