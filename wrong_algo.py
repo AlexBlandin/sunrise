@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-from datetime import datetime
-from math import sin, cos, tan, asin, acos
 from math import degrees as deg, radians as rad
+from math import sin, cos, tan, asin, acos
+from datetime import datetime
 
 from helpers import format_sunriseset, guess_latlon
 

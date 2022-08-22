@@ -1,11 +1,11 @@
-from collections import namedtuple
-from operator import itemgetter
+from operator import itemgetter, mul
+from typing import NamedTuple
 from datetime import datetime
-from parse import parse
+
 from geocoder import ip
 import pendulum
 
-LatLon = namedtuple("LatLon", "lat lon")
+LatLon = NamedTuple("LatLon", lat = float, lon = float)
 
 def guess_latlon():
   return LatLon(*ip("me").latlng)
@@ -19,20 +19,17 @@ def nearest_minute(dt: datetime):
 def format_sunriseset(sunrise: datetime, sunset: datetime):
   return f"🌅: {nearest_minute(sunrise):%H:%M} 🌇: {nearest_minute(sunset):%H:%M}"
 
-def lalo(s: str):
+def dms_to_latlon(s: str):
   """
-  >>> swansea = lalo("51°37′N 3°57′W")
-  LatLon(51.61666666666667, -3.95)
+  Convert degree-minute-second co-ordinates (as you'd get off Wikipedia) to decimal latitude and longitude.
+  NE is positive, SW is negative.
+  
+  >>> London = dms_to_latlon("51°30′26″N 0°7′39″W")
+  LatLon(51.71666666666667, -0.44166666666666665)
+  >>> Roughly_London = dms_to_latlon("51°30′N 0°7′W")
+  LatLon(51.5, -0.11666666666666667)
   """
-  if "N" in s and "W" in s:
-    a, b, c, d = parse("{:d}°{:g}′N {:d}°{:g}′W", s).fixed
-    return a + b / 60, -(c + d / 60)
-  elif "N" in s and "W" not in s:
-    a, b, c, d = parse("{:d}°{:g}′N {:d}°{:g}′E", s).fixed
-    return a + b / 60, c + d / 60
-  elif "N" not in s and "W" in s:
-    a, b, c, d = parse("{:d}°{:g}′S {:d}°{:g}′W", s).fixed
-    return -(a + b / 60), -(c + d / 60)
-  else:
-    a, b, c, d = parse("{:d}°{:g}′S {:d}°{:g}′E", s).fixed
-    return -(a + b / 60), c + d / 60
+  ns, ew = tuple(list(map(int, "".join(c if c.isnumeric() else " " for c in p).split())) for p in s.split(maxsplit = 1))
+  north, east = 1 if "N" in s.upper() else -1, 1 if "E" in s.upper() else -1
+  convert = lambda dms: sum(map(mul, dms, [1] + [1 / (i * 60) for i in range(1, len(dms))]))
+  return LatLon(north * convert(ns), east * convert(ew))
