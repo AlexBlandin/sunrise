@@ -22,8 +22,8 @@ Dependencies:
 """
 
 from operator import itemgetter, mul
-from argparse import ArgumentParser
 from datetime import datetime
+from argparse import ArgumentParser
 from typing import NamedTuple, Union
 from math import radians, degrees, floor, atan, asin, acos, tan, sin, cos
 
@@ -59,11 +59,7 @@ def dms_to_latlon(s: str):
   convert = lambda dms: sum(map(mul, dms, [1] + [1 / (i * 60) for i in range(1, len(dms))]))
   return LatLon(north * convert(ns), east * convert(ew))
 
-def sun(
-  where: Union[tuple[float, float], None] = None,
-  when: Union[datetime, str, None] = None,
-  # tz: Union[str, None] = None
-):
+def sun(where: Union[str, tuple[float, float], None] = None, when: Union[datetime, str, None] = None):
   """
   Source:
     Almanac for Computers, 1990
@@ -82,21 +78,23 @@ def sun(
   """
   # may also use some from http://answers.google.com/answers/threadview/id/782886.html
   
-  lat, lon = where if isinstance(where, tuple) else guess_latlon()
+  lat, lon = dms_to_latlon(where) if isinstance(where, str) else where if isinstance(where, tuple) else guess_latlon()
   
   if isinstance(when, str):
-    when = pendulum.parse(when)
+    day = pendulum.parse(when) # type: ignore
+    if not isinstance(day, pendulum.DateTime): # Pylance doesn't think pendulum exports DateTime, but it does...
+      raise TypeError(f"{when} is not formatted as a date according to pendulum")
   elif isinstance(when, datetime):
-    when = pendulum.instance(when)
+    day = pendulum.instance(when)
   else:
-    when = pendulum.today()
-  when = when.replace(hour = 0, minute = 0, second = 0, microsecond = 0)
+    day = pendulum.today()
+  day = day.replace(hour = 0, minute = 0, second = 0, microsecond = 0)
   
   def _sunrise(rising = True):
     zenith = radians(90 + 50 / 60)
     
     # 1. first calculate the day of the year
-    n = when.day_of_year # pendulum is rather marvellous
+    n = day.day_of_year # pendulum is rather marvellous
     
     # 2. convert the longitude to hour value and calculate an approximate time
     lng_hour = lon / 15
@@ -155,17 +153,17 @@ def sun(
     seconds = int(local_t * 3600)
     secs, mins, hours = seconds % 60, seconds % 3600 // 60, seconds % 86400 // 3600
     
-    return when + pendulum.duration(hours = hours + when.offset_hours + 1, minutes = mins, seconds = secs)
+    return day + pendulum.duration(hours = hours + day.offset_hours + 1, minutes = mins, seconds = secs)
   
   return format_sunriseset(_sunrise(), _sunrise(False))
 
 if __name__ == "__main__":
   parser = ArgumentParser()
-  parser.add_argument("--where", help = """Where we want to see the sunrise/sunset, i.e. London: --where "51°30′26″N 0°7′39″W" """)
+  parser.add_argument(
+    "--where", help = """Where we want to see the sunrise/sunset, i.e. London: --where "51°30′26″N 0°7′39″W" """
+  )
   parser.add_argument("--when", help = """Which day do we wish to know the sunrise/sunset on: --when "1999-12-31" """)
-  # parser.add_argument("--tz", help = """Which timezone to use, defaults to local (or UTC if unknown): --tz "Europe/London" """)
+  
   args = parser.parse_args()
-  if args.where or args.when:# or args.tz:
-    print(sun(dms_to_latlon(args.where) if args.where else None, args.when))
-  else:
-    print(sun()) # use sun(dms_to_latlon("51°30′26″N 0°7′39″W")) for the sunrise in London today
+  
+  print(sun(args.where, args.when))
