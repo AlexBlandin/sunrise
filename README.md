@@ -1,10 +1,9 @@
 # Sunrise
 
 Run `python3 sunrise.py` or `$ ./sunrise.py` and it'll say when the sunrise and sunset are today!
-See `python3 sunrise.py -h` for options, which includes settings for the relevant location and date.
+
+See `python3 sunrise.py -h` for options, which includes configuring the location and date.
 If a location is not provided, it guesses using your IP, so an unmasked internet connection is required then.
-Alternatively, you can fill in the call to `sun()` at the bottom of the script and have it baked it.
-You may find the `dms_to_latlon` function handy, as you can pass co-ordinates from Wikipedia in.
 
 `sunrise.py` dependencies:
 - [Python 3.9](https://www.python.org)
@@ -20,10 +19,11 @@ It can be installed with `pip install skyfield`. This occurs within the `testing
 We offer a [`poetry install`](https://python-poetry.org/) too, which covers all optional dependencies.
 
 ```bash
-usage: sunrise.py [-h] [--where WHERE] [--when WHEN]
+usage: sunrise.py [-h] [--where WHERE] [--when WHEN] [--boring]
 
 optional arguments:
   -h, --help     show this help message and exit
   --where WHERE  Where we want to see the sunrise/sunset, i.e. London: --where "51°30′26″N 0°7′39″W"
   --when WHEN    Which day do we wish to know the sunrise/sunset on: --when "1999-12-31"
+  --boring       A boring prinout, so "08:11 16:04" instead of "🌅: 08:11 🌇: 16:04"
 ```

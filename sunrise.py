@@ -8,10 +8,9 @@
 ╚══════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝╚══════╝╚══════╝╚═╝╚═╝        ╚═╝   
 
 Run `python3 sunrise.py` or `$ ./sunrise.py` and it'll say when the sunrise and sunset are today!
-See `python3 sunrise.py -h` for options, which includes settings for the relevant location and date.
+
+See `python3 sunrise.py -h` for options, which includes configuring the location and date.
 If a location is not provided, it guesses using your IP, so an unmasked internet connection is required then.
-Alternatively, you can fill in the call to `sun()` at the bottom of the script and have it baked it.
-You may find the `dms_to_latlon` function handy, as you can pass co-ordinates from Wikipedia in.
 
 Dependencies:
 - Python 3.9
@@ -41,8 +40,8 @@ def sortas(first: list, second: list):
 def nearest_minute(dt: datetime):
   return (dt + pendulum.duration(seconds = 30)).replace(second = 0, microsecond = 0)
 
-def format_sunriseset(sunrise: datetime, sunset: datetime):
-  return f"🌅: {nearest_minute(sunrise):%H:%M} 🌇: {nearest_minute(sunset):%H:%M}"
+def format_sunriseset(sunrise: datetime, sunset: datetime, pretty = True):
+  return f"🌅: {nearest_minute(sunrise):%H:%M} 🌇: {nearest_minute(sunset):%H:%M}" if pretty else f"{nearest_minute(sunrise):%H:%M} {nearest_minute(sunset):%H:%M}"
 
 def dms_to_latlon(s: str):
   """
@@ -59,7 +58,7 @@ def dms_to_latlon(s: str):
   convert = lambda dms: sum(map(mul, dms, [1] + [1 / (i * 60) for i in range(1, len(dms))]))
   return LatLon(north * convert(ns), east * convert(ew))
 
-def sun(where: Union[str, tuple[float, float], None] = None, when: Union[datetime, str, None] = None):
+def sun(where: Union[str, tuple[float, float], None] = None, when: Union[datetime, str, None] = None, boring: Union[bool, None] = None):
   """
   Source:
     Almanac for Computers, 1990
@@ -155,7 +154,7 @@ def sun(where: Union[str, tuple[float, float], None] = None, when: Union[datetim
     
     return day + pendulum.duration(hours = hours + day.offset_hours + 1, minutes = mins, seconds = secs)
   
-  return format_sunriseset(_sunrise(), _sunrise(False))
+  return format_sunriseset(_sunrise(), _sunrise(False), not boring)
 
 if __name__ == "__main__":
   parser = ArgumentParser()
@@ -163,7 +162,8 @@ if __name__ == "__main__":
     "--where", help = """Where we want to see the sunrise/sunset, i.e. London: --where "51°30′26″N 0°7′39″W" """
   )
   parser.add_argument("--when", help = """Which day do we wish to know the sunrise/sunset on: --when "1999-12-31" """)
+  parser.add_argument("--boring", action = "store_true", help = """A boring prinout, so "08:11 16:04" instead of "🌅: 08:11 🌇: 16:04" """)
   
   args = parser.parse_args()
   
-  print(sun(args.where, args.when))
+  print(sun(args.where, args.when, args.boring))
