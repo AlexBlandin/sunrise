@@ -8,7 +8,7 @@
 ╚══════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝╚══════╝╚══════╝╚═╝╚═╝        ╚═╝   
 
 Run `python3 sunrise.py` or `$ ./sunrise.py` and it'll say when the sunrise and sunset are today!
-See `python3 sunrise.py -h` for options, which include setting the relevat location, date, and timezone.
+See `python3 sunrise.py -h` for options, which includes settings for the relevant location and date.
 If a location is not provided, it guesses using your IP, so an unmasked internet connection is required then.
 Alternatively, you can fill in the call to `sun()` at the bottom of the script and have it baked it.
 You may find the `dms_to_latlon` function handy, as you can pass co-ordinates from Wikipedia in.
