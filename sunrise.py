@@ -8,18 +8,21 @@
 ╚══════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝╚══════╝╚══════╝╚═╝╚═╝        ╚═╝   
 
 Run `python3 sunrise.py` or `$ ./sunrise.py` and it'll say when the sunrise and sunset are today!
-It guesses your location using your IP, so an unmasked internet connection is required.
-Alternatively, you can fill in the call to sun() at the bottom of the script.
-You may find the dms_to_latlon function handy, as you can pass co-ordinates from Wikipedia in.
+See `python3 sunrise.py -h` for options, which include setting the relevat location, date, and timezone.
+If a location is not provided, it guesses using your IP, so an unmasked internet connection is required then.
+Alternatively, you can fill in the call to `sun()` at the bottom of the script and have it baked it.
+You may find the `dms_to_latlon` function handy, as you can pass co-ordinates from Wikipedia in.
 
 Dependencies:
 - Python 3.9
-- pip install geocoder pendulum
-  - Geocoder https://github.com/DenisCarriere/geocoder
-  - Pendulum https://pendulum.eustace.io
+- `pip install pendulum geocoder`
+    - [Pendulum](https://pendulum.eustace.io)
+    - [Geocoder](https://github.com/DenisCarriere/geocoder)
+
 """
 
 from operator import itemgetter, mul
+from argparse import ArgumentParser
 from datetime import datetime
 from typing import NamedTuple, Union
 from math import radians, degrees, floor, atan, asin, acos, tan, sin, cos
@@ -59,7 +62,8 @@ def dms_to_latlon(s: str):
 def sun(
   lat: Union[float, tuple[float, float], None] = None,
   lon: Union[float, None] = None,
-  when: Union[datetime, None] = None
+  when: Union[datetime, str, None] = None,
+  tz: Union[str, None] = None
 ):
   """
   Source:
@@ -83,10 +87,12 @@ def sun(
     lat, lon = guess_latlon()
   elif isinstance(lat, tuple):
     lat, lon = lat
-  if when is None:
-    when = pendulum.today()
+  if isinstance(when, str):
+    when = pendulum.parse(when, tz = tz)
+  if isinstance(when, datetime):
+    when = pendulum.instance(when, tz = tz).replace(hour = 0, minute = 0, second = 0, microsecond = 0)
   else:
-    when = pendulum.instance(when).replace(hour = 0, minute = 0, second = 0, microsecond = 0)
+    when = pendulum.today(tz)
   
   def _sunrise(rising = True):
     zenith = radians(90 + 50 / 60)
@@ -155,4 +161,14 @@ def sun(
   return format_sunriseset(_sunrise(), _sunrise(False))
 
 if __name__ == "__main__":
-  print(sun()) # use sun(dms_to_latlon("51°30′26″N 0°7′39″W")) for the sunrise in London today
+  parser = ArgumentParser()
+  parser.add_argument("--where", help = """Where we want to see the sunrise/sunset, in DMS form, i.e. London is: --where "51°30′26″N 0°7′39″W" """)
+  parser.add_argument("--when", help = """Which day do we wish to know the sunrise/sunset on: --when "1999-12-31" """)
+  parser.add_argument("--tz", help = """Which timezone to use, defaults to local (or UTC if unknown): --tz "Europe/London" """)
+  args = parser.parse_args()
+  if args.where:
+    print(sun(dms_to_latlon(args.where), args.when, args.tz))
+  elif args.when or args.tz:
+    print(sun(None, args.when, args.tz))
+  else:
+    print(sun()) # use sun(dms_to_latlon("51°30′26″N 0°7′39″W")) for the sunrise in London today
