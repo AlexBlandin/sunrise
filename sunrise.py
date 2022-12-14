@@ -161,7 +161,7 @@ def sun(
 
 if __name__ == "__main__":
   parser = ArgumentParser()
-  parser.add_argument("--where", help = """Where we want to see the sunrise/sunset, in DMS form, i.e. London is: --where "51°30′26″N 0°7′39″W" """)
+  parser.add_argument("--where", help = """Where we want to see the sunrise/sunset, i.e. London: --where "51°30′26″N 0°7′39″W" """)
   parser.add_argument("--when", help = """Which day do we wish to know the sunrise/sunset on: --when "1999-12-31" """)
   # parser.add_argument("--tz", help = """Which timezone to use, defaults to local (or UTC if unknown): --tz "Europe/London" """)
   args = parser.parse_args()

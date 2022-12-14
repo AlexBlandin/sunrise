@@ -19,11 +19,11 @@ It can be installed with `pip install skyfield`. This occurs within the `testing
 
 We offer a [`poetry install`](https://python-poetry.org/) too, which covers all optional dependencies.
 
-```cmd
+```bash
 usage: sunrise.py [-h] [--where WHERE] [--when WHEN]
 
 optional arguments:
   -h, --help     show this help message and exit
-  --where WHERE  Where we want to see the sunrise/sunset, in DMS form, i.e. London is: --where "51°30′26″N 0°7′39″W"
+  --where WHERE  Where we want to see the sunrise/sunset, i.e. London: --where "51°30′26″N 0°7′39″W"
   --when WHEN    Which day do we wish to know the sunrise/sunset on: --when "1999-12-31"
 ```
