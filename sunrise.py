@@ -60,10 +60,9 @@ def dms_to_latlon(s: str):
   return LatLon(north * convert(ns), east * convert(ew))
 
 def sun(
-  lat: Union[float, tuple[float, float], None] = None,
-  lon: Union[float, None] = None,
+  where: Union[tuple[float, float], None] = None,
   when: Union[datetime, str, None] = None,
-  tz: Union[str, None] = None
+  # tz: Union[str, None] = None
 ):
   """
   Source:
@@ -76,23 +75,22 @@ def sun(
     https://web.archive.org/web/20210115202147/https://edwilliams.org/sunrise_sunset_algorithm.htm
   
   Inputs:
-    latitude, longitude: location for sunrise/sunset (can be given as a tuple), guesses if None
+    where: location for sunrise/sunset (given as lat/lon tuple), guesses if None
     when: date for sunrise/sunset (requires day, month, year), guesses if None
   Constants:
     zenith: upper limb of the Sun is tangent to the horizon (90 degrees 50')
   """
   # may also use some from http://answers.google.com/answers/threadview/id/782886.html
   
-  if lat is None and lon is None:
-    lat, lon = guess_latlon()
-  elif isinstance(lat, tuple):
-    lat, lon = lat
+  lat, lon = where if isinstance(where, tuple) else guess_latlon()
+  
   if isinstance(when, str):
-    when = pendulum.parse(when, tz = tz)
-  if isinstance(when, datetime):
-    when = pendulum.instance(when, tz = tz).replace(hour = 0, minute = 0, second = 0, microsecond = 0)
+    when = pendulum.parse(when)
+  elif isinstance(when, datetime):
+    when = pendulum.instance(when)
   else:
-    when = pendulum.today(tz)
+    when = pendulum.today()
+  when = when.replace(hour = 0, minute = 0, second = 0, microsecond = 0)
   
   def _sunrise(rising = True):
     zenith = radians(90 + 50 / 60)
@@ -156,7 +154,8 @@ def sun(
     # 11. convert to human-readable time
     seconds = int(local_t * 3600)
     secs, mins, hours = seconds % 60, seconds % 3600 // 60, seconds % 86400 // 3600
-    return (when + pendulum.duration(hours = hours + when.offset_hours + 1, minutes = mins, seconds = secs))
+    
+    return when + pendulum.duration(hours = hours + when.offset_hours + 1, minutes = mins, seconds = secs)
   
   return format_sunriseset(_sunrise(), _sunrise(False))
 
@@ -164,11 +163,9 @@ if __name__ == "__main__":
   parser = ArgumentParser()
   parser.add_argument("--where", help = """Where we want to see the sunrise/sunset, in DMS form, i.e. London is: --where "51°30′26″N 0°7′39″W" """)
   parser.add_argument("--when", help = """Which day do we wish to know the sunrise/sunset on: --when "1999-12-31" """)
-  parser.add_argument("--tz", help = """Which timezone to use, defaults to local (or UTC if unknown): --tz "Europe/London" """)
+  # parser.add_argument("--tz", help = """Which timezone to use, defaults to local (or UTC if unknown): --tz "Europe/London" """)
   args = parser.parse_args()
-  if args.where:
-    print(sun(dms_to_latlon(args.where), args.when, args.tz))
-  elif args.when or args.tz:
-    print(sun(None, args.when, args.tz))
+  if args.where or args.when:# or args.tz:
+    print(sun(dms_to_latlon(args.where) if args.where else None, args.when))
   else:
     print(sun()) # use sun(dms_to_latlon("51°30′26″N 0°7′39″W")) for the sunrise in London today
