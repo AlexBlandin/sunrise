@@ -7,7 +7,7 @@ authors = ["AlexBlandin"]
 [tool.poetry.dependencies]
 python = "^3.9"
 skyfield = "^1.42"
-geocoder = "^1.38.1"
+geocoder = {git = "https://github.com/AlexBlandin/geocoder3.git"}
 pendulum = "^2.1.2"
 
 [tool.poetry.group.dev.dependencies]

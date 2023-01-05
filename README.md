@@ -9,7 +9,7 @@ If a location is not provided, it guesses using your IP, so an unmasked internet
 - [Python 3.9](https://www.python.org)
 - `pip install pendulum geocoder`
   - [Pendulum](https://pendulum.eustace.io)
-  - [Geocoder](https://github.com/DenisCarriere/geocoder)
+  - [Geocoder 3](https://github.com/AlexBlandin/geocoder3)
 
 If you wish to verify the accuracy for yourself, we use [Skyfield](https://rhodesmill.org/skyfield/) as a reference.
 The algorithm was chosen as a balance of accuracy and performance, with margin of error acceptable under variable atmospheric refraction.
