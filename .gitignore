@@ -6,6 +6,7 @@ tempCodeRunnerFile.py
 
 # Distribution / packaging
 .Python
+poetry.lock
 build/
 develop-eggs/
 dist/
