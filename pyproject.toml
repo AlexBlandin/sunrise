@@ -5,7 +5,7 @@ description = "Tell me when the sun is rise. And fall, I guess."
 authors = ["AlexBlandin"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 skyfield = "^1.42"
 geocoder = {git = "https://github.com/AlexBlandin/geocoder3.git"}
 pendulum = "^2.1.2"
