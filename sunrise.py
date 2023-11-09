@@ -13,11 +13,11 @@ See `python3 sunrise.py -h` for options, which includes configuring the location
 If a location is not provided, it guesses using your IP, so an unmasked internet connection is required then.
 
 Dependencies:
-- Python 3.9
+- Python 3.10+
 - `pip install pendulum geocoder`
     - [Pendulum](https://pendulum.eustace.io)
     - [Geocoder](https://github.com/DenisCarriere/geocoder)
-
+      - [My Geocoder fork with Python 3.7+ support (no Python 2)](https://github.com/AlexBlandin/geocoder3)
 """
 
 from operator import itemgetter, mul
@@ -37,11 +37,19 @@ def guess_latlon():
 def sortas(first: list, second: list):
   return list(map(itemgetter(0), sorted(zip(first, second), key = itemgetter(1))))
 
-def nearest_minute(dt: datetime):
+def nearest_minute(dt: pendulum.DateTime):
   return (dt + pendulum.duration(seconds = 30)).replace(second = 0, microsecond = 0)
 
-def format_sunriseset(sunrise: datetime, sunset: datetime, pretty = True):
-  return f"🌅: {nearest_minute(sunrise):%H:%M} 🌇: {nearest_minute(sunset):%H:%M}" if pretty else f"{nearest_minute(sunrise):%H:%M} {nearest_minute(sunset):%H:%M}"
+def format_sunriseset(sunrise: str | pendulum.DateTime, sunset: str | pendulum.DateTime, pretty = True):
+  if isinstance(sunrise, pendulum.DateTime):
+    rise = f"{nearest_minute(sunrise):%H:%M}"
+  else:
+    rise = sunrise
+  if isinstance(sunset, pendulum.DateTime):
+    sets = f"{nearest_minute(sunset):%H:%M}"
+  else:
+    sets = sunset
+  return f"🌅: {rise} 🌇: {sets}" if pretty else f"{rise} {sets}"
 
 def dms_to_latlon(s: str):
   """
@@ -80,14 +88,17 @@ def sun(where: Union[str, tuple[float, float], None] = None, when: Union[datetim
   lat, lon = dms_to_latlon(where) if isinstance(where, str) else where if isinstance(where, tuple) else guess_latlon()
   
   if isinstance(when, str):
-    day = pendulum.parse(when) # type: ignore
-    if not isinstance(day, pendulum.DateTime): # Pylance doesn't think pendulum exports DateTime, but it does...
-      raise TypeError(f"{when} is not formatted as a date according to pendulum")
+    _day = pendulum.parse(when)
+    if not isinstance(_day, pendulum.DateTime):
+      raise TypeError(f"{when} is not formatted as a date according to pendulum, parsed as {type(_day)}")
+    day = _day
   elif isinstance(when, datetime):
     day = pendulum.instance(when)
   else:
     day = pendulum.today()
   day = day.replace(hour = 0, minute = 0, second = 0, microsecond = 0)
+  # this TZ is based on your computer's TZ, so a laptop needs to be configured for where you're at, etc
+  day: pendulum.DateTime = pendulum.instance(day, pendulum.local_timezone())
   
   def _sunrise(rising = True):
     zenith = radians(90 + 50 / 60)
@@ -152,15 +163,13 @@ def sun(where: Union[str, tuple[float, float], None] = None, when: Union[datetim
     seconds = int(local_t * 3600)
     secs, mins, hours = seconds % 60, seconds % 3600 // 60, seconds % 86400 // 3600
     
-    return day + pendulum.duration(hours = hours + day.offset_hours + 1, minutes = mins, seconds = secs)
+    return day + pendulum.duration(hours = hours + (day.offset_hours or 0) + 1, minutes = mins, seconds = secs)
   
   return format_sunriseset(_sunrise(), _sunrise(False), not boring)
 
 if __name__ == "__main__":
   parser = ArgumentParser()
-  parser.add_argument(
-    "--where", help = """Where we want to see the sunrise/sunset, i.e. London: --where "51°30′26″N 0°7′39″W" """
-  )
+  parser.add_argument("--where", help = """Where we want to see the sunrise/sunset, i.e. London: --where "51°30′26″N 0°7′39″W" """)
   parser.add_argument("--when", help = """Which day do we wish to know the sunrise/sunset on: --when "1999-12-31" """)
   parser.add_argument("--boring", action = "store_true", help = """A boring prinout, so "08:11 16:04" instead of "🌅: 08:11 🌇: 16:04" """)
   
