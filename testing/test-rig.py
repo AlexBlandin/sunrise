@@ -11,12 +11,14 @@ print("approx", approx(*latlon))
 
 guesses = [
   (correct(*latlon, day).removeprefix("🌅: ").split(" 🌇: "), approx(*latlon, day).removeprefix("🌅: ").split(" 🌇: "), day)
-  for day in (pendulum.today() + pendulum.duration(years = 10) - pendulum.today())
+  for day in (pendulum.today() + pendulum.duration(years=10) - pendulum.today())
 ]
+
 
 def off_by_more_than_a_tad(t0, t1):
   t0d, t1d = int(t0[-2:]), int(t1[-2:])
   return t0 != t1 and abs(t0d - t1d) > 2 and {t0d, t1d} != {0, 59} and {t0d, t1d} != {1, 59} and {t0d, t1d} != {0, 58}
+
 
 for (r0, s0), (r1, s1), day in guesses:
   if off_by_more_than_a_tad(r0, r1):
