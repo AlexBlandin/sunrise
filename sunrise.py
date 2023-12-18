@@ -20,14 +20,14 @@ Dependencies:
       - [My Geocoder fork with Python 3.7+ support (no Python 2)](https://github.com/AlexBlandin/geocoder3)
 """
 
-from operator import itemgetter, mul
-from datetime import datetime
 from argparse import ArgumentParser
-from typing import NamedTuple, Union
-from math import radians, degrees, floor, atan, asin, acos, tan, sin, cos
+from datetime import datetime
+from math import acos, asin, atan, cos, degrees, floor, radians, sin, tan
+from operator import itemgetter, mul
+from typing import NamedTuple
 
-from geocoder import ip
 import pendulum
+from geocoder import ip
 
 
 class LatLon(NamedTuple):
@@ -40,7 +40,7 @@ def guess_latlon():
 
 
 def sortas(first: list, second: list):
-  return list(map(itemgetter(0), sorted(zip(first, second), key=itemgetter(1))))
+  return list(map(itemgetter(0), sorted(zip(first, second, strict=False), key=itemgetter(1))))
 
 
 def nearest_minute(dt: pendulum.DateTime):
@@ -48,15 +48,13 @@ def nearest_minute(dt: pendulum.DateTime):
 
 
 def format_sunriseset(sunrise: str | pendulum.DateTime, sunset: str | pendulum.DateTime, pretty=True):
-  if isinstance(sunrise, pendulum.DateTime):
-    rise = f"{nearest_minute(sunrise):%H:%M}"
-  else:
-    rise = sunrise
-  if isinstance(sunset, pendulum.DateTime):
-    sets = f"{nearest_minute(sunset):%H:%M}"
-  else:
-    sets = sunset
+  rise = f"{nearest_minute(sunrise):%H:%M}" if isinstance(sunrise, pendulum.DateTime) else sunrise
+  sets = f"{nearest_minute(sunset):%H:%M}" if isinstance(sunset, pendulum.DateTime) else sunset
   return f"🌅: {rise} 🌇: {sets}" if pretty else f"{rise} {sets}"
+
+
+def convert(dms):
+  return sum(map(mul, dms, [1] + [1 / (i * 60) for i in range(1, len(dms))]))
 
 
 def dms_to_latlon(s: str):
@@ -68,14 +66,13 @@ def dms_to_latlon(s: str):
   LatLon(51.71666666666667, -0.44166666666666665)
   >>> Roughly_London = dms_to_latlon("51°30′N 0°7′W")
   LatLon(51.5, -0.11666666666666667)
-  """
+  """  # noqa: RUF002
   ns, ew = tuple(list(map(int, "".join(c if c.isnumeric() else " " for c in p).split())) for p in s.split(maxsplit=1))
   north, east = 1 if "N" in s.upper() else -1, 1 if "E" in s.upper() else -1
-  convert = lambda dms: sum(map(mul, dms, [1] + [1 / (i * 60) for i in range(1, len(dms))]))
   return LatLon(north * convert(ns), east * convert(ew))
 
 
-def sun(where: Union[str, tuple[float, float], None] = None, when: Union[datetime, str, None] = None, boring: Union[bool, None] = None):
+def sun(where: str | (tuple[float, float] | None) = None, when: datetime | (str | None) = None, boring: bool | None = None):
   """
   Source:
     Almanac for Computers, 1990
@@ -99,7 +96,7 @@ def sun(where: Union[str, tuple[float, float], None] = None, when: Union[datetim
   if isinstance(when, str):
     _day = pendulum.parse(when)
     if not isinstance(_day, pendulum.DateTime):
-      raise TypeError(f"{when} is not formatted as a date according to pendulum, parsed as {type(_day)}")
+      raise TypeError(f"{when} is not formatted as a date according to pendulum, parsed as {type(_day)}")  # noqa: TRY003
     day = _day
   elif isinstance(when, datetime):
     day = pendulum.instance(when)
@@ -117,24 +114,21 @@ def sun(where: Union[str, tuple[float, float], None] = None, when: Union[datetim
 
     # 2. convert the longitude to hour value and calculate an approximate time
     lng_hour = lon / 15
-    if rising:
-      t = n + (6 - lng_hour) / 24
-    else:
-      t = n + (18 - lng_hour) / 24
+    t = n + (6 - lng_hour) / 24 if rising else n + (18 - lng_hour) / 24
 
     # 3. calculate the Sun's mean anomaly
     m = 0.9856 * t - 3.289
 
     # 4. calculate the Sun's true longitude
-    l = m + 1.916 * sin(radians(m)) + 0.020 * sin(radians(2 * m)) + 282.634
-    l %= 360
+    l_ = m + 1.916 * sin(radians(m)) + 0.020 * sin(radians(2 * m)) + 282.634
+    l_ %= 360
 
     # 5a. calculate the Sun's right ascension
-    ra = degrees(atan(0.91764 * tan(radians(l))))
+    ra = degrees(atan(0.91764 * tan(radians(l_))))
     ra %= 360
 
     # 5b. right ascension value needs to be in the same quadrant as L
-    l_quad = 90 * floor(l / 90)
+    l_quad = 90 * floor(l_ / 90)
     ra_quad = 90 * floor(ra / 90)
     ra += l_quad - ra_quad
 
@@ -142,7 +136,7 @@ def sun(where: Union[str, tuple[float, float], None] = None, when: Union[datetim
     ra /= 15
 
     # 6. calculate the Sun's declination
-    sin_dec = 0.39782 * sin(radians(l))
+    sin_dec = 0.39782 * sin(radians(l_))
     cos_dec = cos(asin(sin_dec))
 
     # 7a. calculate the Sun's local hour angle
@@ -151,10 +145,7 @@ def sun(where: Union[str, tuple[float, float], None] = None, when: Union[datetim
       return f"never {'rises' if rising else 'sets'}"
 
     # 7b. finish calculating H and convert into hours
-    if rising:
-      h = 360 - degrees(acos(cos_local_h))
-    else:
-      h = degrees(acos(cos_local_h))
+    h = 360 - degrees(acos(cos_local_h)) if rising else degrees(acos(cos_local_h))
     h = h / 15
 
     # 8. calculate local mean time of rising/setting
@@ -172,14 +163,14 @@ def sun(where: Union[str, tuple[float, float], None] = None, when: Union[datetim
     seconds = int(local_t * 3600)
     secs, mins, hours = seconds % 60, seconds % 3600 // 60, seconds % 86400 // 3600
 
-    return day + pendulum.duration(hours=hours + (day.offset_hours or 0) + 1, minutes=mins, seconds=secs)
+    return day + pendulum.duration(hours=hours + (day.offset_hours or 0), minutes=mins, seconds=secs)  # TODO: hours +1?
 
   return format_sunriseset(_sunrise(), _sunrise(False), not boring)
 
 
 if __name__ == "__main__":
   parser = ArgumentParser()
-  parser.add_argument("--where", help="""Where we want to see the sunrise/sunset, i.e. London: --where "51°30′26″N 0°7′39″W" """)
+  parser.add_argument("--where", help="""Where we want to see the sunrise/sunset, i.e. London: --where "51°30′26″N 0°7′39″W" """)  # noqa: RUF001
   parser.add_argument("--when", help="""Which day do we wish to know the sunrise/sunset on: --when "1999-12-31" """)
   parser.add_argument("--boring", action="store_true", help="""A boring prinout, so "08:11 16:04" instead of "🌅: 08:11 🌇: 16:04" """)
 
