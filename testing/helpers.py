@@ -1,9 +1,9 @@
+from datetime import datetime
 from operator import itemgetter, mul
 from typing import NamedTuple
-from datetime import datetime
 
-from geocoder import ip
 import pendulum
+from geocoder import ip
 
 
 class LatLon(NamedTuple):
@@ -16,7 +16,7 @@ def guess_latlon():
 
 
 def sortas(first: list, second: list):
-  return list(map(itemgetter(0), sorted(zip(first, second), key=itemgetter(1))))
+  return list(map(itemgetter(0), sorted(zip(first, second, strict=False), key=itemgetter(1))))
 
 
 def nearest_minute(dt: datetime):
@@ -36,8 +36,15 @@ def dms_to_latlon(s: str):
   LatLon(51.71666666666667, -0.44166666666666665)
   >>> Roughly_London = dms_to_latlon("51°30′N 0°7′W")
   LatLon(51.5, -0.11666666666666667)
-  """
+  """  # noqa: RUF002
   ns, ew = tuple(list(map(int, "".join(c if c.isnumeric() else " " for c in p).split())) for p in s.split(maxsplit=1))
   north, east = 1 if "N" in s.upper() else -1, 1 if "E" in s.upper() else -1
-  convert = lambda dms: sum(map(mul, dms, [1] + [1 / (i * 60) for i in range(1, len(dms))]))
+
+  def convert(dms):
+    return sum(map(mul, dms, [1] + [1 / (i * 60) for i in range(1, len(dms))]))
+
   return LatLon(north * convert(ns), east * convert(ew))
+
+
+if __name__ == "__main__":
+  print(guess_latlon())

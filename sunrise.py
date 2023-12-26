@@ -106,7 +106,7 @@ def sun(where: str | (tuple[float, float] | None) = None, when: datetime | (str 
   # this TZ is based on your computer's TZ, so a laptop needs to be configured for where you're at, etc
   day: pendulum.DateTime = pendulum.instance(day, pendulum.local_timezone())
 
-  def _sunrise(rising=True):
+  def _sunrise(rising=True):  # noqa: PLR0914
     zenith = radians(90 + 50 / 60)
 
     # 1. first calculate the day of the year

@@ -1,16 +1,13 @@
 #!/usr/bin/env python3
 
-from math import sin, cos, tan, asin, acos, atan, floor
-from math import degrees, radians
 from datetime import datetime
-from typing import Union
+from math import acos, asin, atan, cos, degrees, floor, radians, sin, tan
 
 import pendulum
-
 from helpers import format_sunriseset, guess_latlon
 
 
-def approx(lat: Union[float, tuple[float, float], None] = None, lon: Union[float, None] = None, when: Union[datetime, None] = None):
+def approx(lat: float | tuple[float, float] | None = None, lon: float | None = None, when: datetime | None = None):
   """
   Source:
     Almanac for Computers, 1990
@@ -33,12 +30,9 @@ def approx(lat: Union[float, tuple[float, float], None] = None, lon: Union[float
     lat, lon = guess_latlon()
   elif isinstance(lat, tuple):
     lat, lon = lat
-  if when is None:
-    when = pendulum.today()
-  else:
-    when = pendulum.instance(when).replace(hour=0, minute=0, second=0, microsecond=0)
+  when = pendulum.today() if when is None else pendulum.instance(when).replace(hour=0, minute=0, second=0, microsecond=0)
 
-  def _sunrise(rising=True):
+  def _sunrise(rising=True, lat: float = lat, lon: float = lon):  # noqa: PLR0914 # type: ignore
     zenith = radians(90 + 50 / 60)
 
     # 1. first calculate the day of the year
@@ -46,17 +40,14 @@ def approx(lat: Union[float, tuple[float, float], None] = None, lon: Union[float
 
     # 2. convert the longitude to hour value and calculate an approximate time
     lng_hour = lon / 15
-    if rising:
-      t = n + (6 - lng_hour) / 24
-    else:
-      t = n + (18 - lng_hour) / 24
+    t = n + (6 - lng_hour) / 24 if rising else n + (18 - lng_hour) / 24
 
     # 3. calculate the Sun's mean anomaly
     m = 0.9856 * t - 3.289
 
     # 4. calculate the Sun's true longitude
-    l = m + 1.916 * sin(radians(m)) + 0.020 * sin(radians(2 * m)) + 282.634
-    l %= 360
+    l = m + 1.916 * sin(radians(m)) + 0.020 * sin(radians(2 * m)) + 282.634  # noqa: E741
+    l %= 360  # noqa: E741
 
     # 5a. calculate the Sun's right ascension
     ra = degrees(atan(0.91764 * tan(radians(l))))
@@ -80,10 +71,7 @@ def approx(lat: Union[float, tuple[float, float], None] = None, lon: Union[float
       return f"never {'rises' if rising else 'sets'}"
 
     # 7b. finish calculating H and convert into hours
-    if rising:
-      h = 360 - degrees(acos(cos_local_h))
-    else:
-      h = degrees(acos(cos_local_h))
+    h = 360 - degrees(acos(cos_local_h)) if rising else degrees(acos(cos_local_h))
     h = h / 15
 
     # 8. calculate local mean time of rising/setting
@@ -100,10 +88,10 @@ def approx(lat: Union[float, tuple[float, float], None] = None, lon: Union[float
     # 11. convert to human-readable time
     seconds = int(local_t * 3600)
     secs, mins, hours = seconds % 60, seconds % 3600 // 60, seconds % 86400 // 3600
-    return when + pendulum.duration(hours=hours + when.offset_hours + 1, minutes=mins, seconds=secs)
+    return when + pendulum.duration(hours=hours + when.offset_hours + 1, minutes=mins, seconds=secs)  # type: ignore
 
-  return format_sunriseset(_sunrise(), _sunrise(False))
+  return format_sunriseset(_sunrise(), _sunrise(False))  # type: ignore
 
 
 if __name__ == "__main__":
-  print(approx())  # use sun(dms_to_latlon("51°30′26″N 0°7′39″W")) for the sunrise in London today
+  print(approx())  # use sun(dms_to_latlon("51°30′26″N 0°7′39″W")) for the sunrise in London today  # noqa: RUF003
