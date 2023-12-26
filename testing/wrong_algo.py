@@ -7,7 +7,7 @@ from datetime import datetime
 from helpers import format_sunriseset, guess_latlon
 
 
-def algo2(lat: float = None, lon: float = None, when: datetime = None):
+def algo2(lat: float | None = None, lon: float | None = None, when: datetime | None = None):  # noqa: PLR0914
   """
   Calculate sunrise and sunset based on equations from NOAA
   http://www.srrb.noaa.gov/highlights/sunrise/calcdetails.html
@@ -58,9 +58,9 @@ def algo2(lat: float = None, lon: float = None, when: datetime = None):
     - 1.25 * Eccent * Eccent * sin(2 * rad(Manom))
   )
 
-  hourangle = deg(acos(cos(rad(90.833)) / (cos(rad(latitude)) * cos(rad(declination))) - tan(rad(latitude)) * tan(rad(declination))))
+  hourangle = deg(acos(cos(rad(90.833)) / (cos(rad(latitude)) * cos(rad(declination))) - tan(rad(latitude)) * tan(rad(declination))))  # type: ignore
 
-  solarnoon_t = (720 - 4 * longitude - eqtime + timezone * 60) / 1440
+  solarnoon_t = (720 - 4 * longitude - eqtime + timezone * 60) / 1440  # type: ignore
   sunrise_t = solarnoon_t - hourangle * 4 / 1440
   sunset_t = solarnoon_t + hourangle * 4 / 1440
 
