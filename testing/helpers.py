@@ -28,8 +28,7 @@ def format_sunriseset(sunrise: datetime, sunset: datetime):
 
 
 def dms_to_latlon(s: str):
-  """
-  Convert degree-minute-second co-ordinates (as you'd get off Wikipedia) to decimal latitude and longitude.
+  """Convert degree-minute-second co-ordinates (as you'd get off Wikipedia) to decimal latitude and longitude.
   NE is positive, SW is negative.
 
   >>> London = dms_to_latlon("51°30′26″N 0°7′39″W")

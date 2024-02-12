@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""
+"""When is the sun up/down?
+
 ███████╗██╗   ██╗███╗   ██╗██████╗ ██╗███████╗███████╗   ██████╗ ██╗   ██╗
 ██╔════╝██║   ██║████╗  ██║██╔══██╗██║██╔════╝██╔════╝   ██╔══██╗╚██╗ ██╔╝
 ███████╗██║   ██║██╔██╗ ██║██████╔╝██║███████╗█████╗     ██████╔╝ ╚████╔╝
 ╚════██║██║   ██║██║╚██╗██║██╔══██╗██║╚════██║██╔══╝     ██╔═══╝   ╚██╔╝
 ███████║╚██████╔╝██║ ╚████║██║  ██║██║███████║███████╗██╗██║        ██║
-╚══════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝╚══════╝╚══════╝╚═╝╚═╝        ╚═╝
+╚══════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝╚══════╝╚══════╝╚═╝╚═╝        ╚═╝.
 
 Run `python3 sunrise.py` or `$ ./sunrise.py` and it'll say when the sunrise and sunset are today!
 
@@ -58,8 +59,7 @@ def convert(dms):
 
 
 def dms_to_latlon(s: str):
-  """
-  Convert degree-minute-second co-ordinates (as you'd get off Wikipedia) to decimal latitude and longitude.
+  """Convert degree-minute-second co-ordinates (as you'd get off Wikipedia) to decimal latitude and longitude.
   NE is positive, SW is negative.
 
   >>> London = dms_to_latlon("51°30′26″N 0°7′39″W")
@@ -73,15 +73,14 @@ def dms_to_latlon(s: str):
 
 
 def sun(where: str | (tuple[float, float] | None) = None, when: datetime | (str | None) = None, boring: bool | None = None):
-  """
-  Source:
+  """Source:
     Almanac for Computers, 1990
     published by Nautical Almanac Office
     United States Naval Observatory
     Washington, DC 20392
   Archived:
     https://www.edwilliams.org/sunrise_sunset_algorithm.htm
-    https://web.archive.org/web/20210115202147/https://edwilliams.org/sunrise_sunset_algorithm.htm
+    https://web.archive.org/web/20210115202147/https://edwilliams.org/sunrise_sunset_algorithm.htm.
 
   Inputs:
     where: location for sunrise/sunset (given as lat/lon tuple), guesses if None
@@ -96,7 +95,8 @@ def sun(where: str | (tuple[float, float] | None) = None, when: datetime | (str 
   if isinstance(when, str):
     _day = pendulum.parse(when)
     if not isinstance(_day, pendulum.DateTime):
-      raise TypeError(f"{when} is not formatted as a date according to pendulum, parsed as {type(_day)}")  # noqa: TRY003
+      msg = f"{when} is not formatted as a date according to pendulum, parsed as {type(_day)}"
+      raise TypeError(msg)
     day = _day
   elif isinstance(when, datetime):
     day = pendulum.instance(when)
@@ -106,7 +106,7 @@ def sun(where: str | (tuple[float, float] | None) = None, when: datetime | (str 
   # this TZ is based on your computer's TZ, so a laptop needs to be configured for where you're at, etc
   day: pendulum.DateTime = pendulum.instance(day, pendulum.local_timezone())
 
-  def _sunrise(rising=True):  # noqa: PLR0914
+  def _sunrise(rising=True):
     zenith = radians(90 + 50 / 60)
 
     # 1. first calculate the day of the year

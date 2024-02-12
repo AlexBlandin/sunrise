@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 
-from math import degrees as deg, radians as rad
-from math import sin, cos, tan, asin, acos
 from datetime import datetime
+from math import acos, asin, cos, sin, tan
+from math import degrees as deg
+from math import radians as rad
 
 from helpers import format_sunriseset, guess_latlon
 
 
-def algo2(lat: float | None = None, lon: float | None = None, when: datetime | None = None):  # noqa: PLR0914
-  """
-  Calculate sunrise and sunset based on equations from NOAA
-  http://www.srrb.noaa.gov/highlights/sunrise/calcdetails.html
+def algo2(lat: float | None = None, lon: float | None = None, when: datetime | None = None):
+  """Calculate sunrise and sunset based on equations from NOAA
+  http://www.srrb.noaa.gov/highlights/sunrise/calcdetails.html.
   """
   if lat is None and lon is None:
     lat, lon = guess_latlon()
@@ -55,7 +55,7 @@ def algo2(lat: float | None = None, lon: float | None = None, when: datetime | N
     - 2 * Eccent * sin(rad(Manom))
     + 4 * Eccent * vary * sin(rad(Manom)) * cos(2 * rad(Mlong))
     - 0.5 * vary * vary * sin(4 * rad(Mlong))
-    - 1.25 * Eccent * Eccent * sin(2 * rad(Manom))
+    - 1.25 * Eccent * Eccent * sin(2 * rad(Manom)),
   )
 
   hourangle = deg(acos(cos(rad(90.833)) / (cos(rad(latitude)) * cos(rad(declination))) - tan(rad(latitude)) * tan(rad(declination))))  # type: ignore
@@ -65,9 +65,7 @@ def algo2(lat: float | None = None, lon: float | None = None, when: datetime | N
   sunset_t = solarnoon_t + hourangle * 4 / 1440
 
   def as_datetime(dd):
-    """
-    dd is a decimal day between 0.0 and 1.0, e.g. noon = 0.5
-    """
+    """Dd is a decimal day between 0.0 and 1.0, e.g. noon = 0.5."""
     hours = 24.0 * dd
     h = int(hours)
     minutes = (hours - h) * 60

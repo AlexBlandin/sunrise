@@ -3,8 +3,8 @@ import numpy as np
 import pendulum
 from skyfield.api import Time, load
 from skyfield.api import iers2010 as geoid
-from skyfield.positionlib import position_of_radec  # noqa: F401
-from skyfield.searchlib import find_discrete, find_maxima, find_minima  # noqa: F401
+from skyfield.positionlib import position_of_radec
+from skyfield.searchlib import find_discrete, find_maxima, find_minima
 
 # from skyfield.projections import build_stereographic_projection
 

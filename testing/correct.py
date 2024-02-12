@@ -14,8 +14,7 @@ eph = load("de440s-100y.bsp") if (Path(__file__).parent / "de440s-100y.bsp").is_
 
 
 def correct(lat: float | (tuple[float, float] | None) = None, lon: float | None = None, when: datetime | None = None):
-  "When does the sun rise and set?"
-
+  """When does the sun rise and set?"""
   if lat is None and lon is None:
     lat, lon = guess_latlon()
   elif isinstance(lat, tuple):
@@ -33,7 +32,7 @@ def correct(lat: float | (tuple[float, float] | None) = None, lon: float | None 
   t, y = almanac.find_discrete(t0, t1, almanac.sunrise_sunset(eph, here))
 
   # for now we assume there's both (so not above artic circle etc)
-  sunrise, sunset = map(lambda t: t.astimezone(pendulum.local_timezone()), reversed(sortas(t, y)))
+  sunrise, sunset = (t.astimezone(pendulum.local_timezone()) for t in reversed(sortas(t, y)))
   return format_sunriseset(sunrise, sunset)
 
 

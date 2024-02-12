@@ -1,7 +1,7 @@
+import pendulum
 from approx import approx
 from correct import correct
 from helpers import guess_latlon
-import pendulum
 
 latlon = guess_latlon()
 print("correct", correct(*latlon))

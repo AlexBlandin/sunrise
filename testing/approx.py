@@ -8,15 +8,14 @@ from helpers import format_sunriseset, guess_latlon
 
 
 def approx(lat: float | tuple[float, float] | None = None, lon: float | None = None, when: datetime | None = None):
-  """
-  Source:
+  """Source:
     Almanac for Computers, 1990
     published by Nautical Almanac Office
     United States Naval Observatory
     Washington, DC 20392
   Archived:
     https://www.edwilliams.org/sunrise_sunset_algorithm.htm
-    https://web.archive.org/web/20210115202147/https://edwilliams.org/sunrise_sunset_algorithm.htm
+    https://web.archive.org/web/20210115202147/https://edwilliams.org/sunrise_sunset_algorithm.htm.
 
   Inputs:
     latitude, longitude: location for sunrise/sunset (can be given as a tuple), guesses if None
@@ -32,7 +31,7 @@ def approx(lat: float | tuple[float, float] | None = None, lon: float | None = N
     lat, lon = lat
   when = pendulum.today() if when is None else pendulum.instance(when).replace(hour=0, minute=0, second=0, microsecond=0)
 
-  def _sunrise(rising=True, lat: float = lat, lon: float = lon):  # noqa: PLR0914 # type: ignore
+  def _sunrise(rising=True, lat: float = lat, lon: float = lon):  # type: ignore
     zenith = radians(90 + 50 / 60)
 
     # 1. first calculate the day of the year
