@@ -163,7 +163,7 @@ def sun(where: str | (tuple[float, float] | None) = None, when: datetime | (str 
     seconds = int(local_t * 3600)
     secs, mins, hours = seconds % 60, seconds % 3600 // 60, seconds % 86400 // 3600
 
-    return day + pendulum.duration(hours=hours + (day.offset_hours or 0), minutes=mins, seconds=secs)  # TODO: hours +1?
+    return day + pendulum.duration(hours=hours + (day.offset_hours or 0), minutes=mins, seconds=secs)  # TODO(alex): hours +1?
 
   return format_sunriseset(_sunrise(), _sunrise(False), not boring)
 
