@@ -1,15 +1,19 @@
+"""
+day length.
+
+Copyright 2022 Alex Blandin
+"""
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pendulum
 from skyfield.api import Time, load
 from skyfield.api import iers2010 as geoid
-from skyfield.positionlib import position_of_radec
-from skyfield.searchlib import find_discrete, find_maxima, find_minima
 
 # from skyfield.projections import build_stereographic_projection
 
 
-def calendar(year):
+def calendar(year) -> dict[int, int]:  # noqa: ANN001, D103
   return {
     1: 31,
     2: 29 if year % 4 == 0 and (year % 100 != 0 or year % 400 == 0) else 28,
@@ -26,15 +30,15 @@ def calendar(year):
   }
 
 
-def rotation_matrix_between(a: Time, b: Time):
+def rotation_matrix_between(a: Time, b: Time):  # noqa: ANN201, D103
   return pole.rotation_at(a) * pole.rotation_at(b).T
 
 
-def rotation_between(a: Time, b: Time):
+def rotation_between(a: Time, b: Time):  # noqa: ANN201, D103
   return np.arccos((np.trace(rotation_matrix_between(a, b)) - 1) / 2)
 
 
-def angles_of_matrix(rtm: np.ndarray):
+def angles_of_matrix(rtm: np.ndarray):  # noqa: ANN201, D103
   return (  # Euler axis/angle°, 3-1-3 Euler extrinsic
     f"{np.degrees(np.arccos((np.trace(rtm) - 1) / 2)):0.3f}° (θ angle)",
     f"{np.degrees(np.arctan2(rtm[2, 0], rtm[2, 1])):0.3f}° (z ex.)",
@@ -43,14 +47,14 @@ def angles_of_matrix(rtm: np.ndarray):
   )
 
 
-np.set_printoptions(formatter={"float": lambda f: f"{f:0.6f}" if f > 0.0 else f"{f:0.5f}"})  # type: ignore
+np.set_printoptions(formatter={"float": lambda f: f"{f:0.6f}" if f > 0.0 else f"{f:0.5f}"})  # type: ignore  # noqa: PGH003, PLR2004
 fig, ax = plt.subplots(figsize=(12, 8))
 ts = load.timescale()
 pole = geoid.latlon(90, 0)
 
 # rotations_at_midnight = {
 #   time: pole.rotation_at(time)
-#   for time in [ts.utc(year=year, month=month, day=day) for year in range(2020, 2025) for month, days in calendar(year).items() for day in range(1, days + 1)]
+#   for time in [ts.utc(year=year, month=month, day=day) for year in range(2020, 2025) for month, days in calendar(year).items() for day in range(1, days + 1)]  # noqa: E501
 # }
 # print(len(rotations_at_midnight))
 # print(next(iter(rotations_at_midnight.values())))
@@ -60,7 +64,11 @@ pole = geoid.latlon(90, 0)
 # so we just need to collapse that to axis of spin around the poles, and the difference there is it!
 # then our differences of midnights are "how far are we", so the least difference is the "best" 24 hours!
 # so we need to get the axis between the north & south poles?
-today, midday, tomorrow = ts.from_datetime(pendulum.today()), ts.from_datetime(pendulum.today().replace(hour=12)), ts.from_datetime(pendulum.tomorrow())
+today, midday, tomorrow = (
+  ts.from_datetime(pendulum.today()),
+  ts.from_datetime(pendulum.today().replace(hour=12)),
+  ts.from_datetime(pendulum.tomorrow()),
+)
 
 print("rotation at pole <today> <midday> <tomorrow>")
 print(pole.rotation_at(today))

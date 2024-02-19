@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+"""
+correct sunrise.
+
+Copyright 2022 Alex Blandin
+"""
 
 from datetime import datetime
 from pathlib import Path
@@ -13,7 +18,7 @@ ts = load.timescale()
 eph = load("de440s-100y.bsp") if (Path(__file__).parent / "de440s-100y.bsp").is_file() else load("de440s.bsp")
 
 
-def correct(lat: float | (tuple[float, float] | None) = None, lon: float | None = None, when: datetime | None = None):
+def correct(lat: float | (tuple[float, float] | None) = None, lon: float | None = None, when: datetime | None = None):  # noqa: ANN201
   """When does the sun rise and set?"""
   if lat is None and lon is None:
     lat, lon = guess_latlon()
