@@ -3,6 +3,7 @@ name = "Sunrise"
 version = "1.0.0"
 description = "Tell me when the sun is rise. And fall, I guess."
 authors = ["AlexBlandin"]
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.10"
