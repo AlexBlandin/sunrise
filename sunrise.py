@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""When is the sun up/down?
+"""
+Nobody ever asks: how is the sun, it's always where is the sun...
 
 Copyright 2022 Alex Blandin
 
