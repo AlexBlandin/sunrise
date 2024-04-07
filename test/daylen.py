@@ -47,7 +47,7 @@ def angles_of_matrix(rtm: np.ndarray):  # noqa: ANN201, D103
   )
 
 
-np.set_printoptions(formatter={"float": lambda f: f"{f:0.6f}" if f > 0.0 else f"{f:0.5f}"})  # type: ignore  # noqa: PGH003, PLR2004
+np.set_printoptions(formatter={"float": lambda f: f"{f:0.6f}" if f > 0.0 else f"{f:0.5f}"})  # type: ignore  # noqa: PGH003
 fig, ax = plt.subplots(figsize=(12, 8))
 ts = load.timescale()
 pole = geoid.latlon(90, 0)
