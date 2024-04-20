@@ -22,6 +22,8 @@ See `sunrise.py -h` for options, which includes configuring the location and dat
   - We use [Geocoder 3](https://github.com/AlexBlandin/geocoder3)
 """
 
+# TODO(alex): t = pendulum.now().astimezone(pendulum.UTC); ...; t.astimezone() # will put back to local time
+
 from argparse import ArgumentParser
 from datetime import datetime
 from math import acos, asin, atan, cos, degrees, floor, radians, sin, tan
