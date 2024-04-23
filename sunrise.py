@@ -44,7 +44,10 @@ class LatLon(NamedTuple):  # noqa: D101
 def sun(  # noqa: ANN201
   where: str | (tuple[float, float] | None) = None, when: datetime | (str | None) = None, simple: bool | None = None
 ):
-  """Source:
+  """
+  When will the sun rise (and set) today?
+
+  Source:
     Almanac for Computers, 1990
     published by Nautical Almanac Office
     United States Naval Observatory
@@ -58,7 +61,7 @@ def sun(  # noqa: ANN201
     when: date for sunrise/sunset (requires day, month, year), guesses if None
   Constants:
     zenith: upper limb of the Sun is tangent to the horizon (90 degrees 50')
-  """  # noqa: D205
+  """
   # may also use some from http://answers.google.com/answers/threadview/id/782886.html
 
   lat, lon = dms_to_latlon(where) if isinstance(where, str) else where if isinstance(where, tuple) else guess_latlon()
