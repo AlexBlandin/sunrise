@@ -15,9 +15,9 @@ decorator==5.1.1
 future==1.0.0
     # via geocoder
 geocoder==1.38.1
-idna==3.6
+idna==3.7
     # via requests
-jplephem==2.21
+jplephem==2.22
     # via skyfield
 numpy==1.26.4
     # via
