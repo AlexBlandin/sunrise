@@ -6,11 +6,11 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
 authors = [{ name = "AlexBlandin" }]
-dependencies = ["geocoder", "pendulum"]
+dependencies = ["geocoder", "pendulum", "attrs", "cattrs"]
 
 [project.optional-dependencies]
 skyfield = ["skyfield"]
-dev = ["ruff"]
+dev = ["ruff", "pdbp", "basedmypy", "basedpyright"]
 
 [project.urls]
 Documentation = "https://github.com/alexblandin/sunrise#readme"
@@ -28,7 +28,7 @@ ignore = [
   "ERA",    # code comments actually help
   "TD003",  # not using github to track todo/issues
   "S311",   # I know when to use secrets
-  "T20",    # print is good, actually 
+  # "T20",    # print is good, actually 
   "W191",   # ruff format
   "E111",   # ruff format
   "E114",   # ruff format

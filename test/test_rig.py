@@ -1,27 +1,28 @@
 """
 sunrise test rig.
 
-Copyright 2022 Alex Blandin
+Copyright 2021 Alex Blandin
 """
 
 import pendulum
-from approx import approx
-from correct import correct
-from helpers import guess_latlon
 
-latlon = guess_latlon()
-print("correct", correct(*latlon))
-print("approx", approx(*latlon))
+from ..sunrise.approx import approx
+from ..sunrise.correct import correct
+from ..sunrise.helpers import LatLon
+
+latlon = LatLon.guess().tuple()
+print("correct", correct(*latlon))  # noqa: T201
+print("approx", approx(latlon))  # noqa: T201
 
 # approx is basically correct, and WAY faster, if you're okay with being just a tad off at times
 
 guesses = [
   (
     correct(*latlon, day).removeprefix("🌅: ").split(" 🌇: "),
-    approx(*latlon, day).removeprefix("🌅: ").split(" 🌇: "),
+    approx(latlon, day).removeprefix("🌅: ").split(" 🌇: "),
     day,
   )
-  for day in (pendulum.today() + pendulum.duration(years=10) - pendulum.today())
+  for day in pendulum.today() + pendulum.duration(years=10) - pendulum.today()
 ]
 
 
@@ -32,6 +33,6 @@ def off_by_more_than_a_tad(t0, t1):  # noqa: ANN001, ANN201, D103
 
 for (r0, s0), (r1, s1), day in guesses:
   if off_by_more_than_a_tad(r0, r1):
-    print(day, r0, r1)
+    print(day, r0, r1)  # noqa: T201
   if off_by_more_than_a_tad(s0, s1):
-    print(day, s0, s1)
+    print(day, s0, s1)  # noqa: T201

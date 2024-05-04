@@ -10,10 +10,10 @@ See `sunrise.py -h` for options, which includes configuring the location and dat
   - We use [Pendulum](https://pendulum.eustace.io)
   - We use [Geocoder 3](https://github.com/AlexBlandin/geocoder3)
 
-Our algorithm was chosen as a balance of accuracy and performance, with margin of error acceptable under variable atmospheric refraction. If you wish to verify the accuracy for yourself, `./test/test-rig.py` uses [Skyfield](https://rhodesmill.org/skyfield/) as a reference. It can be installed with `pip install skyfield` or `pip install -r requirements-skyfield.txt`. **This is optional**, as `sunrise.py` does not use it.
+Our algorithm was chosen as a balance of accuracy and performance, with margin of error acceptable under variable atmospheric refraction. If you wish to verify the accuracy for yourself, `./test/test_rig.py` uses [Skyfield](https://rhodesmill.org/skyfield/) as a reference. It can be installed with `pip install skyfield` or `pip install -r requirements-skyfield.txt`. **This is optional**, as `sunrise.py` does not use it.
 
 ```bash
-usage: sunrise.py [-h] [--where WHERE] [--when WHEN] [--boring]
+usage: python sunrise.py [-h] [--where WHERE] [--when WHEN] [--boring]
 
 optional arguments:
   -h, --help     show this help message and exit

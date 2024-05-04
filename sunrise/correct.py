@@ -2,26 +2,26 @@
 """
 correct sunrise.
 
-Copyright 2022 Alex Blandin
+Copyright 2021 Alex Blandin
 """
 
 from datetime import datetime
-from pathlib import Path
 
 import pendulum
-from helpers import format_sunriseset, guess_latlon, sortas
-from skyfield import almanac
-from skyfield.api import Loader, wgs84
+from skyfield import almanac  # pyright: ignore[reportMissingTypeStubs]
+from skyfield.api import Loader, wgs84  # pyright: ignore[reportMissingTypeStubs]
 
-load = Loader(Path(__file__).parent.absolute(), verbose=False)
+from .helpers import DATA_DIR, LatLon, format_sunriseset, sortas
+
+load = Loader(DATA_DIR.absolute(), verbose=False)
 ts = load.timescale()
-eph = load("de440s-100y.bsp") if (Path(__file__).parent / "de440s-100y.bsp").is_file() else load("de440s.bsp")
+eph = load(DATA_DIR / "de440s-100y.bsp") if (DATA_DIR / "de440s-100y.bsp").is_file() else load(DATA_DIR / "de440s.bsp")
 
 
 def correct(lat: float | (tuple[float, float] | None) = None, lon: float | None = None, when: datetime | None = None):  # noqa: ANN201
   """When does the sun rise and set?"""
   if lat is None and lon is None:
-    lat, lon = guess_latlon()
+    lat, lon = LatLon.guess().tuple()
   elif isinstance(lat, tuple):
     lat, lon = lat
   here = wgs84.latlon(lat, lon)
@@ -42,4 +42,4 @@ def correct(lat: float | (tuple[float, float] | None) = None, lon: float | None 
 
 
 if __name__ == "__main__":
-  print(correct())
+  print(correct())  # noqa: T201
