@@ -135,7 +135,7 @@ def format_sunriseset(sunrise: str | pendulum.DateTime, sunset: str | pendulum.D
         return when
 
   rise, sets = _format(sunrise), _format(sunset)
-  return f"🌅: {rise} 🌇: {sets}" if pretty else f"{rise} {sets}"
+  return f"🌅 {rise} | 🌇 {sets}" if pretty else f"{rise} {sets}"
 
 
 if __name__ == "__main__":

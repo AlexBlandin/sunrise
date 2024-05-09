@@ -23,7 +23,10 @@ If a location is not provided, it guesses using your IP, so an unmasked internet
   - We use [Geocoder 3](https://github.com/AlexBlandin/geocoder3)
 """
 
+import sys
 from argparse import ArgumentParser
+
+import pendulum
 
 from sunrise.approx import approx  # pyright: ignore[reportImplicitRelativeImport]
 
@@ -40,4 +43,6 @@ if __name__ == "__main__":
 
   args = parser.parse_args()
 
-  print(approx(args.where, args.when, args.simple))  # noqa: T201 # pyright: ignore[reportAny]
+  now = pendulum.now()
+  sunrisesunset = approx(args.where, args.when, args.simple) # pyright: ignore[reportAny]
+  print(f"{sunrisesunset} | {now.format('dddd [the] Do [of] MMMM [|] YYYY-MM-DD [| UNIX: ~]X[s]')}")  # noqa: T201
