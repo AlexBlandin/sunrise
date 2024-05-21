@@ -5,7 +5,7 @@ for /f "skip=1 tokens=2-4 delims=(-)" %%A in ('echo/^|date') do (
   for /f "tokens=%t%-4 delims=.-/ " %%J in ('date/t') do (
     set %%A=%%J&set %%B=%%K&set %%C=%%L)
 )
-set sunrisecache=%USERPROFILE%\.cache\sunrise
+set sunrisecache="%USERPROFILE%\.cache\sunrise"
 if not exist %sunrisecache% (
   mkdir %sunrisecache%
 )
