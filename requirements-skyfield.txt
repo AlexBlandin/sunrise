@@ -38,7 +38,7 @@ python-dateutil==2.9.0.post0
     #   time-machine
 ratelim==0.1.6
     # via geocoder
-requests==2.31.0
+requests==2.32.3
     # via geocoder
 sgp4==2.23
     # via skyfield
