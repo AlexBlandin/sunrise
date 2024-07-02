@@ -44,5 +44,5 @@ if __name__ == "__main__":
   args = parser.parse_args()
 
   now = pendulum.now()
-  sunrisesunset = approx(args.where, args.when, args.simple) # pyright: ignore[reportAny]
+  sunrisesunset = approx(args.where, args.when, args.simple)  # pyright: ignore[reportAny]
   print(f"{sunrisesunset} | {now.format('dddd [the] Do [of] MMMM [|] YYYY-MM-DD [| UNIX: ~]X[s]')}")  # noqa: T201
