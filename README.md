@@ -21,3 +21,7 @@ optional arguments:
   --when WHEN    Which day do we wish to know the sunrise/sunset on: --when "1999-12-31"
   --simple       A simple printout, so "08:11 16:04" instead of "🌅: 08:11 🌇: 16:04"
 ```
+
+## Windows Task Scheduler
+
+In `TaskScheduler/` is a template for running `sunrise.cmd` in the background on Windows via Task Scheduler (`taskschd`). This can also be achieved with [`schtasks`](https://ss64.com/nt/schtasks.html) in `cmd.exe`, e.g. `schtasks /create /tn "Sunrise" /tr "sunrise.cmd" /sc daily /mo 1`.
