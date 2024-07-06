@@ -23,7 +23,6 @@ If a location is not provided, it guesses using your IP, so an unmasked internet
   - We use [Geocoder 3](https://github.com/AlexBlandin/geocoder3)
 """
 
-import sys
 from argparse import ArgumentParser
 
 import pendulum

@@ -6,7 +6,7 @@ attrs==23.2.0
     #   cattrs
 cattrs==23.2.3
     # via sunrise (pyproject.toml)
-certifi==2024.2.2
+certifi==2024.7.4
     # via
     #   requests
     #   skyfield
@@ -26,7 +26,7 @@ idna==3.7
     # via requests
 jplephem==2.22
     # via skyfield
-numpy==1.26.4
+numpy==2.0.0
     # via
     #   jplephem
     #   skyfield
@@ -46,9 +46,9 @@ six==1.16.0
     # via
     #   geocoder
     #   python-dateutil
-skyfield==1.48
+skyfield==1.49
     # via sunrise (pyproject.toml)
-time-machine==2.14.1
+time-machine==2.14.2
     # via pendulum
 tzdata==2024.1
     # via pendulum
