@@ -16,7 +16,7 @@ from geocoder import ip  # pyright: ignore[reportMissingTypeStubs,reportUnknownV
 DATA_DIR = Path(__file__).parent.parent / "data"
 
 
-def sortas[T](first: Iterable[T], second: Iterable) -> list[T]:
+def sortas(first: Iterable, second: Iterable) -> list:
   """Sorts the first as if it was the second."""
   return list(map(itemgetter(0), sorted(zip(first, second, strict=True))))
 
