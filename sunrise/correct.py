@@ -11,19 +11,28 @@ import pendulum
 from skyfield import almanac  # pyright: ignore[reportMissingTypeStubs]
 from skyfield.api import Loader, wgs84  # pyright: ignore[reportMissingTypeStubs]
 
-from .helpers import DATA_DIR, LatLon, format_sunriseset, sortas
+from .helpers import DATA_DIR, LatLon, current_position, format_sunrise_sunset
 
 load = Loader(DATA_DIR.absolute(), verbose=False)
 ts = load.timescale()
-eph = load(DATA_DIR / "de440s-100y.bsp") if (DATA_DIR / "de440s-100y.bsp").is_file() else load(DATA_DIR / "de440s.bsp")
+eph = load("de440s-100y.bsp") if (DATA_DIR / "de440s-100y.bsp").is_file() else load("de440s.bsp")
 
 
-def correct(lat: float | (tuple[float, float] | None) = None, lon: float | None = None, when: datetime | None = None):  # noqa: ANN201
-  """When does the sun rise and set?"""
-  if lat is None and lon is None:
-    lat, lon = LatLon.guess().tuple()
-  elif isinstance(lat, tuple):
-    lat, lon = lat
+def correct(
+  where: str | LatLon | tuple[float, float] | None = None,
+  when: pendulum.DateTime | datetime | (str | None) = None,
+  simple: bool | None = None,
+) -> str:
+  """
+  When will the sun rise (and set) today?
+
+  Inputs:
+    where: location for sunrise/sunset (given as lat/lon tuple), guesses if None
+    when: date for sunrise/sunset (requires day, month, year), guesses if None
+  """
+  # may also use some from http://answers.google.com/answers/threadview/id/782886.html
+  latlon = current_position(where)
+  lat, lon = latlon.tuple()
   here = wgs84.latlon(lat, lon)
 
   if when is None:
@@ -34,11 +43,13 @@ def correct(lat: float | (tuple[float, float] | None) = None, lon: float | None 
 
   t0 = ts.utc(tdy.year, tdy.month, tdy.day)
   t1 = ts.utc(tmw.year, tmw.month, tmw.day)
-  t, y = almanac.find_discrete(t0, t1, almanac.sunrise_sunset(eph, here))
 
-  # for now we assume there's both (so not above artic circle etc)
-  sunrise, sunset = (t.astimezone(pendulum.local_timezone()) for t in reversed(sortas(t, y)))
-  return format_sunriseset(sunrise, sunset)
+  sun = eph["Sun"]
+  observer = eph["Earth"] + here
+  (sunrise, *t), (sun_rose, *y) = almanac.find_risings(observer, sun, t0, t1)
+  (sunset, *t), (sun_sets, *y) = almanac.find_settings(observer, sun, t0, t1)
+  sunrise, sunset = pendulum.parse(sunrise.utc_iso(" ")).astimezone(), pendulum.parse(sunset.utc_iso(" ")).astimezone()
+  return format_sunrise_sunset(sunrise, sunset, pretty=not simple, sun_rose=sun_rose, sun_sets=sun_sets)
 
 
 if __name__ == "__main__":

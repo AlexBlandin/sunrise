@@ -16,7 +16,7 @@ from geocoder import ip  # pyright: ignore[reportMissingTypeStubs,reportUnknownV
 DATA_DIR = Path(__file__).parent.parent / "data"
 
 
-def sortas(first: Iterable, second: Iterable) -> list:
+def sort_as(first: Iterable, second: Iterable) -> list:
   """Sorts the first as if it was the second."""
   return list(map(itemgetter(0), sorted(zip(first, second, strict=True))))
 
@@ -124,7 +124,14 @@ def nearest_minute(dt: pendulum.DateTime) -> pendulum.DateTime:
   return (dt.astimezone(pendulum.UTC) + pendulum.duration(seconds=30)).astimezone().replace(second=0, microsecond=0)
 
 
-def format_sunriseset(sunrise: str | pendulum.DateTime, sunset: str | pendulum.DateTime, *, pretty: bool = True) -> str:
+def format_sunrise_sunset(
+  sunrise: str | pendulum.DateTime,
+  sunset: str | pendulum.DateTime,
+  *,
+  pretty: bool = True,
+  sun_rose: bool = True,
+  sun_sets: bool = True,
+) -> str:
   """Formats into a combined sunrise/sunset time."""
 
   def _format(when: str | pendulum.DateTime) -> str:
@@ -134,7 +141,7 @@ def format_sunriseset(sunrise: str | pendulum.DateTime, sunset: str | pendulum.D
       case _:
         return when
 
-  rise, sets = _format(sunrise), _format(sunset)
+  rise, sets = _format(sunrise) if sun_rose else "never rises", _format(sunset) if sun_sets else "never sets"
   return f"🌅 {rise} | 🌇 {sets}" if pretty else f"{rise} {sets}"
 
 

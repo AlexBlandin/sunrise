@@ -10,7 +10,7 @@ from math import acos, asin, atan, cos, degrees, floor, radians, sin, tan
 
 import pendulum
 
-from .helpers import LatLon, current_day, current_position, format_sunriseset
+from .helpers import LatLon, current_day, current_position, format_sunrise_sunset
 
 
 def approx(
@@ -97,7 +97,7 @@ def approx(
 
     return day.at(hour=hours, minute=mins, second=secs).astimezone()
 
-  return format_sunriseset(_sunrise(), _sunrise(rising=False), pretty=not simple)
+  return format_sunrise_sunset(_sunrise(), _sunrise(rising=False), pretty=not simple)
 
 
 if __name__ == "__main__":

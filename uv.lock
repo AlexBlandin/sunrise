@@ -1,4 +1,5 @@
 version = 1
+revision = 1
 requires-python = ">=3.10"
 
 [[package]]
@@ -556,6 +557,7 @@ requires-dist = [
     { name = "ruff", marker = "extra == 'dev'" },
     { name = "skyfield", marker = "extra == 'skyfield'" },
 ]
+provides-extras = ["skyfield", "dev"]
 
 [[package]]
 name = "tabcompleter"

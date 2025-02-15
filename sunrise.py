@@ -27,7 +27,9 @@ from argparse import ArgumentParser
 
 import pendulum
 
-from sunrise.approx import approx  # pyright: ignore[reportImplicitRelativeImport]
+from sunrise.approx import approx as calculate  # pyright: ignore[reportImplicitRelativeImport]
+
+# from sunrise.correct import correct as calculate
 
 if __name__ == "__main__":
   parser = ArgumentParser()
@@ -43,5 +45,5 @@ if __name__ == "__main__":
   args = parser.parse_args()
 
   now = pendulum.now()
-  sunrisesunset = approx(args.where, args.when, args.simple)  # pyright: ignore[reportAny]
-  print(f"{sunrisesunset} | {now.format('dddd [the] Do [of] MMMM [|] YYYY-MM-DD [| UNIX: ~]X[s]')}")  # noqa: T201
+  sunrise_sunset = calculate(args.where, args.when, args.simple)  # pyright: ignore[reportAny]
+  print(f"{sunrise_sunset} | {now.format('dddd [the] Do [of] MMMM [|] YYYY-MM-DD [| UNIX: ~]X[s]')}")  # noqa: T201
