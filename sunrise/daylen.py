@@ -6,7 +6,7 @@ Copyright 2021 Alex Blandin
 
 import matplotlib.pyplot as plt
 import numpy as np
-import pendulum
+import whenever
 from skyfield.api import Time, load  # pyright: ignore[reportMissingTypeStubs]
 from skyfield.api import iers2010 as geoid  # pyright: ignore[reportMissingTypeStubs]
 
@@ -66,9 +66,9 @@ def rotations():
   # then our differences of midnights are "how far are we", so the least difference is the "best" 24 hours!
   # so we need to get the axis between the north & south poles?
   today, midday, tomorrow = (
-    ts.from_datetime(pendulum.today()),
-    ts.from_datetime(pendulum.today().replace(hour=12)),
-    ts.from_datetime(pendulum.tomorrow()),
+    ts.from_datetime(whenever.SystemDateTime.now().start_of_day().py_datetime()),
+    ts.from_datetime(whenever.SystemDateTime.now().start_of_day().add(hour=12).py_datetime()),
+    ts.from_datetime(whenever.SystemDateTime.now().add(days=1).start_of_day().py_datetime()),
   )
 
   print("rotation at pole <today> <midday> <tomorrow>")  # noqa: T201

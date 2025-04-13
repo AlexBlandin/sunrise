@@ -1,4 +1,15 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run --quiet --script
+# /// script
+# requires-python = ">=3.13"
+# dependencies = [
+#     "attrs",
+#     "cattrs",
+#     "geocoder",
+#     "whenever",
+#     # "skyfield",
+# ]
+# ///
+#
 """
 Nobody ever asks: how is the sun, it's always where is the sun...
 
@@ -17,19 +28,17 @@ See `sunrise.py -h` for options, which includes configuring the location and dat
 If a location is not provided, it guesses using your IP, so an unmasked internet connection is required then.
 
 ## Requirements
+
+- None, if you use [`uv run --script sunrise.py`](https://github.com/astral-sh/uv), or other PEP 723 compliant invokers!
 - [`pip install -r requirements.txt`](https://www.python.org/)
   - [regenerate with `uv pip compile pyproject.toml -o requirements.txt`](https://github.com/astral-sh/uv)
-  - We use [Pendulum](https://pendulum.eustace.io)
+  - We use [`whenever`](https://github.com/ariebovenberg/whenever)
   - We use [Geocoder 3](https://github.com/AlexBlandin/geocoder3)
 """
 
 from argparse import ArgumentParser
 
-import pendulum
-
-from sunrise.approx import approx as calculate  # pyright: ignore[reportImplicitRelativeImport]
-
-# from sunrise.correct import correct as calculate
+import whenever
 
 if __name__ == "__main__":
   parser = ArgumentParser()
@@ -41,9 +50,35 @@ if __name__ == "__main__":
   parser.add_argument(
     "--simple", action="store_true", help="""Simpler output, "08:11 16:04" vs "🌅: 08:11 🌇: 16:04" """
   )  # pyright: ignore[reportUnusedCallResult]
+  parser.add_argument(
+    "--skyfield", action="store_true", help="""Use Skyfield to calculate exact answers https://rhodesmill.org/skyfield/"""
+  )
+  parser.add_argument(
+    "--test", action="store_true", help="""Run tests for discrepencies over time, implies --skyfield"""
+  )
 
   args = parser.parse_args()
 
-  now = pendulum.now()
-  sunrise_sunset = calculate(args.where, args.when, args.simple)  # pyright: ignore[reportAny]
-  print(f"{sunrise_sunset} | {now.format('dddd [the] Do [of] MMMM [|] YYYY-MM-DD [| UNIX: ~]X[s]')}")  # noqa: T201
+  if args.test:
+    from sunrise.test_rig import test
+    test()
+  else:
+    if args.skyfield:
+      from sunrise.correct import correct as calculate
+    else:
+      from sunrise.approx import approx as calculate  # pyright: ignore[reportImplicitRelativeImport]
+
+    now = whenever.SystemDateTime.now()
+    sunrise_sunset = calculate(args.where, args.when, simple=args.simple)  # pyright: ignore[reportAny]
+    match now.day:
+      case 1 | 21 | 31:
+        day_ord = "st"
+      case 2 | 22:
+        day_ord = "nd"
+      case 3 | 23:
+        day_ord = "rd"
+      case 7 | 17 | 27:
+        day_ord = "nth"
+      case _:
+        day_ord = "th"
+    print(f"{sunrise_sunset} | {now.py_datetime().strftime('%A the %d# of %B | %Y-%m-%d | UNIX: ~$s'.replace('#', day_ord).replace('$', str(now.timestamp())))}")  # noqa: T201

@@ -8,15 +8,15 @@ Copyright 2021 Alex Blandin
 from datetime import datetime
 from math import acos, asin, atan, cos, degrees, floor, radians, sin, tan
 
-import pendulum
+import whenever
 
 from .helpers import LatLon, current_day, current_position, format_sunrise_sunset
 
 
 def approx(
   where: str | LatLon | tuple[float, float] | None = None,
-  when: pendulum.DateTime | datetime | (str | None) = None,
-  simple: bool | None = None,
+  when: whenever.SystemDateTime | datetime | (str | None) = None,
+  *, simple: bool = False,
 ) -> str:
   """
   When will the sun rise (and set) today?
@@ -42,15 +42,15 @@ def approx(
 
   day = current_day(when)
 
-  def _sunrise(*, rising: bool = True) -> str | pendulum.DateTime:
+  def _sunrise(*, rising: bool = True) -> str | whenever.SystemDateTime:
     zenith = radians(90 + 50 / 60)
 
     # 1. first calculate the day of the year
-    _ = day.day_of_year
+    day_of_year = day.date().days_since(whenever.Date(day.year, 1, 1)) + 1
 
     # 2. convert the longitude to hour value and calculate an approximate time
     lng_hour = longitude / 15
-    t = day.day_of_year + (6 - lng_hour) / 24 if rising else day.day_of_year + (18 - lng_hour) / 24
+    t = day_of_year + ((6 - lng_hour) if rising else (18 - lng_hour)) / 24
 
     # 3. calculate the Sun's mean anomaly
     m = 0.9856 * t - 3.289
@@ -81,7 +81,8 @@ def approx(
       return f"never {'rises' if rising else 'sets'}"
 
     # 7b. finish calculating H and convert into hours
-    h = (360 - degrees(acos(cos_local_h))) if rising else degrees(acos(cos_local_h))
+    h = degrees(acos(cos_local_h))
+    if rising: h = 360 - h
     h = h / 15
 
     # 8. calculate local mean time of rising/setting
@@ -95,8 +96,7 @@ def approx(
     seconds = int(ut * 3600)
     secs, mins, hours = seconds % 60, seconds % 3600 // 60, seconds % 86400 // 3600
 
-    return day.at(hour=hours, minute=mins, second=secs).astimezone()
-
+    return day.date().at(whenever.Time(hours, mins, secs)).assume_utc().to_system_tz()
   return format_sunrise_sunset(_sunrise(), _sunrise(rising=False), pretty=not simple)
 
 

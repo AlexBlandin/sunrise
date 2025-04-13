@@ -9,7 +9,7 @@ from datetime import datetime
 from operator import itemgetter, mul
 from pathlib import Path
 
-import pendulum
+import whenever
 from attrs import astuple, frozen
 from geocoder import ip  # pyright: ignore[reportMissingTypeStubs,reportUnknownVariableType]
 
@@ -99,34 +99,28 @@ def current_position(
       return LatLon.guess()
 
 
-def current_day(when: pendulum.DateTime | datetime | (str | None) = None) -> pendulum.DateTime:
+def current_day(when: whenever.SystemDateTime | datetime | (str | None) = None) -> whenever.SystemDateTime:
   "When on Earth are we?"
   match when:
-    case str(when):
-      day = pendulum.parse(when)
-      if not isinstance(day, pendulum.DateTime):
-        msg = f"{when} is not formatted as a date according to pendulum, parsed as {type(day)}"
-        raise TypeError(msg)
-      day = pendulum.parse(day.to_date_string())
-      assert isinstance(day, pendulum.DateTime)  # noqa: S101
-    case pendulum.DateTime() as when:
-      day = when
-    case datetime() as when:
-      day = pendulum.instance(when)
+    case str(date):
+      tdy = whenever.LocalDateTime.strptime(date, "%Y-%m-%d").assume_system_tz()
+    case datetime() as date:
+      tdy = whenever.SystemDateTime.from_py_datetime(date)
+    case whenever.SystemDateTime() as date:
+      tdy = date
     case _:
-      day = pendulum.today(pendulum.UTC)
+      tdy = whenever.SystemDateTime.now()
+  return tdy.start_of_day()
 
-  return day.astimezone(pendulum.UTC)
 
-
-def nearest_minute(dt: pendulum.DateTime) -> pendulum.DateTime:
+def nearest_minute(dt: whenever.SystemDateTime) -> whenever.SystemDateTime:
   """Rounds to the nearest minute."""
-  return (dt.astimezone(pendulum.UTC) + pendulum.duration(seconds=30)).astimezone().replace(second=0, microsecond=0)
+  return dt.round("minute")
 
 
 def format_sunrise_sunset(
-  sunrise: str | pendulum.DateTime,
-  sunset: str | pendulum.DateTime,
+  sunrise: str | whenever.SystemDateTime,
+  sunset: str | whenever.SystemDateTime,
   *,
   pretty: bool = True,
   sun_rose: bool = True,
@@ -134,10 +128,10 @@ def format_sunrise_sunset(
 ) -> str:
   """Formats into a combined sunrise/sunset time."""
 
-  def _format(when: str | pendulum.DateTime) -> str:
+  def _format(when: str | whenever.SystemDateTime) -> str:
     match when:
-      case pendulum.DateTime() as when:
-        return f"{nearest_minute(when):%H:%M}"
+      case whenever.SystemDateTime() as when:
+        return f"{nearest_minute(when).py_datetime():%H:%M}"
       case _:
         return when
 
