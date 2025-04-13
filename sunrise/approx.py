@@ -16,7 +16,8 @@ from .helpers import LatLon, current_day, current_position, format_sunrise_sunse
 def approx(
   where: str | LatLon | tuple[float, float] | None = None,
   when: whenever.SystemDateTime | datetime | (str | None) = None,
-  *, simple: bool = False,
+  *,
+  simple: bool = False,
 ) -> str:
   """
   When will the sun rise (and set) today?
@@ -82,7 +83,8 @@ def approx(
 
     # 7b. finish calculating H and convert into hours
     h = degrees(acos(cos_local_h))
-    if rising: h = 360 - h
+    if rising:
+      h = 360 - h
     h = h / 15
 
     # 8. calculate local mean time of rising/setting
@@ -97,6 +99,7 @@ def approx(
     secs, mins, hours = seconds % 60, seconds % 3600 // 60, seconds % 86400 // 3600
 
     return day.date().at(whenever.Time(hours, mins, secs)).assume_utc().to_system_tz()
+
   return format_sunrise_sunset(_sunrise(), _sunrise(rising=False), pretty=not simple)
 
 

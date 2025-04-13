@@ -51,7 +51,9 @@ if __name__ == "__main__":
     "--simple", action="store_true", help="""Simpler output, "08:11 16:04" vs "🌅: 08:11 🌇: 16:04" """
   )  # pyright: ignore[reportUnusedCallResult]
   parser.add_argument(
-    "--skyfield", action="store_true", help="""Use Skyfield to calculate exact answers https://rhodesmill.org/skyfield/"""
+    "--skyfield",
+    action="store_true",
+    help="""Use Skyfield to calculate exact answers https://rhodesmill.org/skyfield/""",
   )
   parser.add_argument(
     "--test", action="store_true", help="""Run tests for discrepencies over time, implies --skyfield"""
@@ -61,6 +63,7 @@ if __name__ == "__main__":
 
   if args.test:
     from sunrise.test_rig import test
+
     test()
   else:
     if args.skyfield:
@@ -81,4 +84,6 @@ if __name__ == "__main__":
         day_ord = "nth"
       case _:
         day_ord = "th"
-    print(f"{sunrise_sunset} | {now.py_datetime().strftime('%A the %d# of %B | %Y-%m-%d | UNIX: ~$s'.replace('#', day_ord).replace('$', str(now.timestamp())))}")  # noqa: T201
+    print(
+      f"{sunrise_sunset} | {now.py_datetime().strftime('%A the %d# of %B | %Y-%m-%d | UNIX: ~$s'.replace('#', day_ord).replace('$', str(now.timestamp())))}"
+    )  # noqa: T201

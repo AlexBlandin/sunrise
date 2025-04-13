@@ -21,7 +21,8 @@ eph = load("de440s-100y.bsp") if (DATA_DIR / "de440s-100y.bsp").is_file() else l
 def correct(
   where: str | LatLon | tuple[float, float] | None = None,
   when: whenever.SystemDateTime | datetime | (str | None) = None,
-  *, simple: bool = False,
+  *,
+  simple: bool = False,
 ) -> str:
   """
   When will the sun rise (and set) today?
@@ -45,7 +46,10 @@ def correct(
   observer = eph["Earth"] + here
   (sunrise, *t), (sun_rose, *y) = almanac.find_risings(observer, sun, t0, t1)
   (sunset, *t), (sun_sets, *y) = almanac.find_settings(observer, sun, t0, t1)
-  sunrise, sunset = whenever.Instant.parse_rfc3339(sunrise.utc_iso()).to_system_tz(), whenever.Instant.parse_rfc3339(sunset.utc_iso()).to_system_tz()
+  sunrise, sunset = (
+    whenever.Instant.parse_rfc3339(sunrise.utc_iso()).to_system_tz(),
+    whenever.Instant.parse_rfc3339(sunset.utc_iso()).to_system_tz(),
+  )
   return format_sunrise_sunset(sunrise, sunset, pretty=not simple, sun_rose=sun_rose, sun_sets=sun_sets)
 
 
