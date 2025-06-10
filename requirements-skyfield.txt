@@ -32,7 +32,7 @@ numpy==2.0.0
     #   skyfield
 ratelim==0.1.6
     # via geocoder
-requests==2.32.3
+requests==2.32.4
     # via geocoder
 sgp4==2.23
     # via skyfield
