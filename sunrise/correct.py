@@ -11,7 +11,7 @@ import whenever
 from skyfield import almanac  # pyright: ignore[reportMissingTypeStubs]
 from skyfield.api import Loader, wgs84  # pyright: ignore[reportMissingTypeStubs]
 
-from .helpers import DATA_DIR, LatLon, current_position, current_day, format_sunrise_sunset
+from .helpers import DATA_DIR, LatLon, current_day, current_position, format_sunrise_sunset
 
 load = Loader(DATA_DIR.absolute(), verbose=False)
 ts = load.timescale()

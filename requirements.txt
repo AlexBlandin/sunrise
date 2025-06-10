@@ -22,23 +22,15 @@ geocoder==1.38.1
     # via sunrise (pyproject.toml)
 idna==3.7
     # via requests
-pendulum==3.0.0
-    # via sunrise (pyproject.toml)
-python-dateutil==2.9.0.post0
-    # via
-    #   pendulum
-    #   time-machine
 ratelim==0.1.6
     # via geocoder
 requests==2.32.3
     # via geocoder
 six==1.16.0
-    # via
-    #   geocoder
-    #   python-dateutil
-time-machine==2.14.2 ; implementation_name != 'pypy'
-    # via pendulum
-tzdata==2024.1
-    # via pendulum
+    # via geocoder
+tzdata==2024.1 ; sys_platform == 'win32'
+    # via whenever
 urllib3==2.2.2
     # via requests
+whenever==0.8.5
+    # via sunrise (pyproject.toml)

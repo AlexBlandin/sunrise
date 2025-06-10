@@ -2,11 +2,11 @@
 # /// script
 # requires-python = ">=3.13"
 # dependencies = [
-#     "attrs",
-#     "cattrs",
-#     "geocoder",
-#     "whenever",
-#     # "skyfield",
+#   "attrs",
+#   "cattrs",
+#   "geocoder",
+#   "whenever",
+#   # "skyfield",
 # ]
 # ///
 #
@@ -86,4 +86,4 @@ if __name__ == "__main__":
         day_ord = "th"
     print(
       f"{sunrise_sunset} | {now.py_datetime().strftime('%A the %d# of %B | %Y-%m-%d | UNIX: ~$s'.replace('#', day_ord).replace('$', str(now.timestamp())))}"
-    )  # noqa: T201
+    )
