@@ -81,7 +81,7 @@ if __name__ == "__main__":
       case 3 | 23:
         day_ord = "rd"
       case 7 | 17 | 27:
-        day_ord = "nth"
+        day_ord = "th"  # or "nth", if you prefer
       case _:
         day_ord = "th"
     print(
