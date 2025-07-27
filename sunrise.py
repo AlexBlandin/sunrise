@@ -4,7 +4,7 @@
 # dependencies = [
 #   "attrs",
 #   "cattrs",
-#   "geocoder",
+#   "geocoder@https://github.com/AlexBlandin/geocoder3.git",
 #   "whenever",
 #   # "skyfield",
 # ]

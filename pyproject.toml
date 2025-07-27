@@ -8,6 +8,9 @@ license = "MIT"
 authors = [{ name = "AlexBlandin" }]
 dependencies = ["geocoder", "whenever", "attrs", "cattrs"]
 
+[tool.uv.sources]
+geocoder = { git = "https://github.com/AlexBlandin/geocoder3" }
+
 [project.optional-dependencies]
 skyfield = ["skyfield"]
 dev = ["ruff", "pdbp", "basedmypy", "basedpyright"]
