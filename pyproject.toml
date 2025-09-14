@@ -13,7 +13,7 @@ geocoder = { git = "https://github.com/AlexBlandin/geocoder3" }
 
 [project.optional-dependencies]
 skyfield = ["skyfield"]
-dev = ["ruff", "pdbp", "basedmypy", "basedpyright"]
+dev = ["ruff"]
 
 [project.urls]
 Documentation = "https://github.com/alexblandin/sunrise#readme"

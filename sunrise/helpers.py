@@ -1,3 +1,15 @@
+#!/usr/bin/env -S uv run -qqs
+# /// script
+# requires-python = ">=3.11"
+# dependencies = [
+#   "attrs",
+#   "cattrs",
+#   "geocoder@https://github.com/AlexBlandin/geocoder3.git",
+#   "whenever",
+#   # "skyfield",
+# ]
+# ///
+#
 """
 sunrise helpers.
 

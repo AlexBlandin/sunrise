@@ -12,7 +12,7 @@ if not exist %sunrisecache% (
 set today="%sunrisecache%\%yy%-%mm%-%dd%.txt"
 if not exist %today% (
   for %%x in ("%sunrisecache%\*.txt") do del %%x
-  @uv run --script sunrise.py %* > %today%
+  @call uv run -qqs sunrise.py %* > %today%
   type %today%
 ) else (
   type %today%
