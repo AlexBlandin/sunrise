@@ -31,7 +31,7 @@ eph = load("de440s-100y.bsp") if (DATA_DIR / "de440s-100y.bsp").is_file() else l
 
 def correct(
   where: str | LatLon | tuple[float, float] | None = None,
-  when: whenever.SystemDateTime | datetime | (str | None) = None,
+  when: whenever.ZonedDateTime | datetime | str | None = None,
   *,
   simple: bool = False,
 ) -> str:

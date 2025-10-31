@@ -20,7 +20,7 @@ def test():
 
   delta = {"years": 10}
   print(f"discrepencies over the next {delta}")
-  today = whenever.SystemDateTime.now()
+  today = whenever.ZonedDateTime.now_in_system_tz()
   guesses = [
     (
       correct(latlon, today.add(days=day), simple=True).split(),

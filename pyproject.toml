@@ -6,14 +6,16 @@ readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
 authors = [{ name = "AlexBlandin" }]
-dependencies = ["geocoder", "whenever", "attrs", "cattrs"]
+dependencies = ["geocoder", "whenever>0.8", "attrs", "cattrs"]
 
 [tool.uv.sources]
 geocoder = { git = "https://github.com/AlexBlandin/geocoder3" }
 
+[dependency-groups]
+dev = ["ruff"]
+
 [project.optional-dependencies]
 skyfield = ["skyfield"]
-dev = ["ruff"]
 
 [project.urls]
 Documentation = "https://github.com/alexblandin/sunrise#readme"

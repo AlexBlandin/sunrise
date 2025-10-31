@@ -80,9 +80,9 @@ def rotations():
   # then our differences of midnights are "how far are we", so the least difference is the "best" 24 hours!
   # so we need to get the axis between the north & south poles?
   today, midday, tomorrow = (
-    ts.from_datetime(whenever.SystemDateTime.now().start_of_day().py_datetime()),
-    ts.from_datetime(whenever.SystemDateTime.now().start_of_day().add(hour=12).py_datetime()),
-    ts.from_datetime(whenever.SystemDateTime.now().add(days=1).start_of_day().py_datetime()),
+    ts.from_datetime(whenever.ZonedDateTime.now_in_system_tz().start_of_day().py_datetime()),
+    ts.from_datetime(whenever.ZonedDateTime.now_in_system_tz().start_of_day().add(hour=12).py_datetime()),
+    ts.from_datetime(whenever.ZonedDateTime.now_in_system_tz().add(days=1).start_of_day().py_datetime()),
   )
 
   print("rotation at pole <today> <midday> <tomorrow>")  # noqa: T201

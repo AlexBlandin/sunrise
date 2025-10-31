@@ -71,7 +71,7 @@ if __name__ == "__main__":
     else:
       from sunrise.approx import approx as calculate  # pyright: ignore[reportImplicitRelativeImport]
 
-    now = whenever.SystemDateTime.now()
+    now = whenever.ZonedDateTime.now_in_system_tz()
     sunrise_sunset = calculate(args.where, args.when, simple=args.simple)  # pyright: ignore[reportAny]
     match now.day:
       case 1 | 21 | 31:

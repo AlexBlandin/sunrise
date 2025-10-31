@@ -26,7 +26,7 @@ from .helpers import LatLon, current_day, current_position, format_sunrise_sunse
 
 def approx(
   where: str | LatLon | tuple[float, float] | None = None,
-  when: whenever.SystemDateTime | datetime | (str | None) = None,
+  when: whenever.ZonedDateTime | datetime | str | None = None,
   *,
   simple: bool = False,
 ) -> str:
@@ -54,7 +54,7 @@ def approx(
 
   day = current_day(when)
 
-  def _sunrise(*, rising: bool = True) -> str | whenever.SystemDateTime:
+  def _sunrise(*, rising: bool = True) -> str | whenever.ZonedDateTime:
     zenith = radians(90 + 50 / 60)
 
     # 1. first calculate the day of the year

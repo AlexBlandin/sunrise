@@ -5,7 +5,7 @@
 #   "attrs",
 #   "cattrs",
 #   "geocoder@https://github.com/AlexBlandin/geocoder3.git",
-#   "whenever",
+#   "whenever>0.8",
 #   # "skyfield",
 # ]
 # ///
@@ -111,28 +111,30 @@ def current_position(
       return LatLon.guess()
 
 
-def current_day(when: whenever.SystemDateTime | datetime | (str | None) = None) -> whenever.SystemDateTime:
+def current_day(when: whenever.ZonedDateTime | datetime | str | None = None) -> whenever.ZonedDateTime:
   "When on Earth are we?"
   match when:
     case str(date):
-      tdy = whenever.LocalDateTime.strptime(date, "%Y-%m-%d").assume_system_tz()
+      tdy = whenever.PlainDateTime(date).assume_system_tz()  # .strptime(date, "%Y-%m-%d").assume_system_tz()
+    case datetime(tzinfo=None) as date:
+      tdy = whenever.PlainDateTime.from_py_datetime(date).assume_system_tz()
     case datetime() as date:
-      tdy = whenever.SystemDateTime.from_py_datetime(date)
-    case whenever.SystemDateTime() as date:
+      tdy = whenever.ZonedDateTime.from_py_datetime(date)
+    case whenever.ZonedDateTime() as date:
       tdy = date
     case _:
-      tdy = whenever.SystemDateTime.now()
+      tdy = whenever.ZonedDateTime.now_in_system_tz()
   return tdy.start_of_day()
 
 
-def nearest_minute(dt: whenever.SystemDateTime) -> whenever.SystemDateTime:
+def nearest_minute(dt: whenever.ZonedDateTime) -> whenever.ZonedDateTime:
   """Rounds to the nearest minute."""
   return dt.round("minute")
 
 
 def format_sunrise_sunset(
-  sunrise: str | whenever.SystemDateTime,
-  sunset: str | whenever.SystemDateTime,
+  sunrise: str | whenever.ZonedDateTime,
+  sunset: str | whenever.ZonedDateTime,
   *,
   pretty: bool = True,
   sun_rose: bool = True,
@@ -140,9 +142,9 @@ def format_sunrise_sunset(
 ) -> str:
   """Formats into a combined sunrise/sunset time."""
 
-  def _format(when: str | whenever.SystemDateTime) -> str:
+  def _format(when: str | whenever.ZonedDateTime) -> str:
     match when:
-      case whenever.SystemDateTime() as when:
+      case whenever.ZonedDateTime() as when:
         return f"{nearest_minute(when).py_datetime():%H:%M}"
       case _:
         return when
