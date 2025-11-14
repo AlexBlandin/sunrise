@@ -5,7 +5,7 @@
 #   "attrs",
 #   "cattrs",
 #   "geocoder@https://github.com/AlexBlandin/geocoder3.git",
-#   "whenever",
+#   "whenever>=0.9",
 #   # "skyfield",
 # ]
 # ///

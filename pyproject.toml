@@ -6,10 +6,12 @@ readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
 authors = [{ name = "AlexBlandin" }]
-dependencies = ["geocoder", "whenever>0.8", "attrs", "cattrs"]
-
-[tool.uv.sources]
-geocoder = { git = "https://github.com/AlexBlandin/geocoder3" }
+dependencies = [
+  "attrs",
+  "cattrs",
+  "geocoder@https://github.com/AlexBlandin/geocoder3.git",
+  "whenever>0.8",
+]
 
 [dependency-groups]
 dev = ["ruff"]
